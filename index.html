@@ -57,26 +57,61 @@ class Application
         
         document.body.appendChild(this.ctx.canvas); // DrawingContext.canvas is an HTML Element.
         
-        this.testGL(); // In JavaScript, "this" is not implied.
+        this.setGLOptions();
+        
+        this.animate(); // In JavaScript, "this" is not implied.
     }
     
+    // Set options for the 3d graphics renderer.
+    setGLOptions()
+    {
+        let logoImage = new Image();
+        logoImage.src = "logo.png";
+        
+        logoImage.onload = function() // Once the image has loaded,
+        {
+            WebGLHelper.imageToTexture(logoImage);
+        };
+        
+        WebGLHelper.setClearColorString("green");
+    }
+    
+    // A fast method to display a cube, to test WebGL.
     testGL()
     {
+        let time = (new Date()).getTime(); // Time in milliseconds.
+    
         // Tell the canvas to fill the screen.
         WebGLHelper.resizeTo(window.innerWidth, window.innerHeight);
         
         WebGLHelper.clear();
         WebGLHelper.worldMatrix.save();
         
-        WebGLHelper.worldMatrix.rotateX(0.5, true); // True means use the method where matricies
+        WebGLHelper.worldMatrix.rotateX(Math.sin(time / 1000.0) * Math.PI, true); // True means use the method where matricies
                                                     //are multiplied first, then the new matrix
                                                     //modifies a point, instead of the other way
                                                     //around. The other method is kept for compatibility. 0.5 is in radians.
+        
+        WebGLHelper.worldMatrix.scale(1, 0.5, 1, true); // The true is very important for proper scaling.
         
         WebGLHelper.updateMatricies(false, true, true); // Update the world and camera matricies.
         WebGLHelper.renderObject();
         
         WebGLHelper.worldMatrix.restore();
+    }
+    
+    // A basic animation loop.
+    animate()
+    {
+        this.testGL();
+    
+        // If not stopping,
+        if(!this.stopAnimationLoop)
+        {
+            // A global JavaScript function that calls 
+            // the given function a small number of milliseconds later.
+            requestAnimationFrame(this.animate.bind(this));
+        }
     }
     
     // I included this for fun!
@@ -91,8 +126,7 @@ class Application
     }
 }
 
-var app = new Application();
-app.getCanvas();
+let app = new Application();
 </script>
 </body>
 </html>
