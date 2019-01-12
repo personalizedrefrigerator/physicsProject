@@ -1,0 +1,3854 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- (c) 2018 -->
+    <!-- Por Henry Heino. -->
+    <!-- Creó en íngles. En 2018, tradujé a español. -->
+    
+    
+    <meta charset="utf-8" />
+    <meta http-equiv="Cache-Control" content = "cache"/>
+    <meta http-equiv="Pragma" content="cache"/>
+    <meta http-equiv="encoding" content="UTF-8"/>
+    <meta name="viewport" content = "width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0"/>
+    <link rel = "icon" href = "logo.png"/>
+    <title>Pantalla, Cambie.</title>
+    <style>
+    @keyframes fadeIn
+    {
+        0% { filter: opacity(0%) sepia(100%); }
+        50% { filter: opacity(50%) sepia(50%); }
+        100% { filter: opacity(100%) sepia(0%); }
+    }
+    
+    button
+    {
+        border: 1px outset gray;
+        border-radius:10%;
+        background-color:lightgray;
+        background-image:linear-gradient(10deg, 
+rgba(0,0,100,0.5),rgba(0,255,0,0.1));
+        text-shadow: 0px -1px 0px lightgray;
+        transition: 0.3s ease all;
+    }
+
+    button:hover
+    {
+        box-shadow: 5px 5px 20px rgba(0,0,0,0.5);
+        transform: matrix(1.1,0.01,-0.01,1.1,0,0);
+    }
+
+    input[type="text"], textarea
+    {
+        border: 1px outset darkgray;
+        font: 12pt sans;
+        background-color:white;
+        color: black;
+        transition: 0.5s ease all;
+    }
+
+    input[type="text"]:hover, input[type="text"]:focus, textarea:hover, textarea:focus
+    {
+        box-shadow: 0px 0px 10px black;
+        /*text-shadow: 1px 1px 0px gray;*/
+    }
+
+    input[type="text"]:hover, input[type="text"]:focus
+    {
+        transform:matrix(0.9,0.05,0,1,0,0);
+    }
+    
+    body
+    {
+        background-color: white;
+        background-image: radial-gradient(rgba(200, 200, 200, 0.8), white);
+        background-size: 10px 10px;
+    }
+
+    .logotipo
+    {
+        margin-left: 47.5vw;
+    }
+
+    .logotipo img
+    {
+        width: 10vw;
+        transform: rotate(5deg);
+        border-radius: 100%;
+        background-color: rgba(255, 255, 255, 0.6);
+        box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.6);
+ 
+        transition: 1s ease all;
+    }
+
+    .logotipo img:hover
+    {
+        transform: rotate(20deg) scale(1.1, 1.1);
+        filter: sepia(50%);
+    }
+    
+    .windowTitleBar, .windowCloseButton
+    {
+        font: 20pt Sans;
+    }
+
+    .windowContent
+    {
+        overflow-y: auto;
+        width: 100%;
+    }
+
+    .windowTitleBar
+    {
+        height: 1em;
+        overflow: hidden;
+        cursor: default;
+    }
+
+    .baseWindowTitleBar
+    {
+        border: 1px solid black;
+        background-image: radial-gradient(white, rgba(100, 100, 100, 0.7));
+        background-size: 5px 5px;
+    }
+    
+    .fileWindowTitleBar
+    {
+        color: white;
+        font: bold 1em Sans;
+        text-shadow: 0px 0px 1px rgba(0, 0, 255, 0.6);
+        padding: 5px;
+        text-align: center;
+    }
+
+    .window
+    {
+        position: fixed;
+    }
+
+    .baseWindow
+    {
+        border: 1px solid black;
+        background-color: white;
+        top: 10vh;
+        left: 30vh;
+        width: 40vh;
+        height: 50vh;
+        transition: 0.5s ease background-color, border;
+        filter: opacity(100%);
+        animation: 0.5s linear fadeIn;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .fileWindow
+    {
+        border: 1px solid white;
+        border-radius: 6px;
+        background-image: linear-gradient(34deg, rgba(0, 200, 200, 0.6), rgba(0, 200, 255, 0.4), green);
+        padding: 7px;
+        box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .windowCloseButton
+    {
+        width: 1.2em;
+        height: 1em;
+        text-align: center;
+        float: right;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .baseWindowCloseButton, .fileWindowCloseButton
+    {
+        border: 2px solid rgba(255, 255, 255, 1.0);
+        border-radius: 2px;
+        
+        background-color: red;
+        background-image: linear-gradient(100deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.4));
+        
+        color: white;
+        text-shadow: 1px 1px rgba(0, 0, 0, 0.5);
+        
+        background-size: 100% 100%;
+        box-shadow: -2px -2px 0px rgba(0, 0, 0, 0.0);
+        
+        transition: 0.4s ease all;
+    }
+
+    .baseWindowCloseButton:hover, .fileWindowCloseButton:hover
+    {
+        border: 2px solid rgba(250, 250, 250, 0.8);
+        background-size: 200% 200%;
+        box-shadow: -2px -2px 2px rgba(0, 0, 0, 0.5);
+    }
+    
+    .fileWindowCloseButton
+    {
+        filter: hue-rotate(80deg);
+        transform: rotate(25deg);
+    }
+
+    .windowDragCircle
+    {   
+        display: inline;
+        float: right;
+        
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        
+        cursor: move;
+    }
+
+    .baseWindowDragCircle
+    {
+        background-color: rgba(100, 100, 100, 0.5);
+        background-image: radial-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.5));
+        
+        border: 1px solid black;
+        border-radius: 50%;
+        padding: 20px;
+        
+        z-index: 150;
+    }
+    
+    .fileWindowDragCircle
+    {
+        border-radius: 50%;
+        border: 1px dotted orange;
+        box-shadow: 3px 3px 1px rgba(100, 100, 100, 0.6);
+        
+        background-color: rgba(100, 100, 100, 0.5);
+        background-image: radial-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.5));
+        padding: 10px;
+        
+        z-index: 150;
+    }
+    
+    .draggableHelper
+    {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        touch-action: none;
+        z-index: 2000;
+    }
+    
+    .tabHeader
+    {
+        border-bottom: 2px ridge black;
+        font: 14pt Serif;
+    }
+
+    .tabLabel
+    {
+        outline: 2px groove orange;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        background-image: linear-gradient(12deg, white, rgba(240, 220, 220, 0.7), white);
+        cursor: pointer;
+        box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+        filter: opacity(75%);
+        transform: matrix(1, 0, 0, 1, 0, 0);
+        font-weight: bold;
+        transition: 0.2s ease all;
+        animation: fadeIn;
+    }
+
+    .tabLabel:hover
+    {
+        box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.7);
+        background-image: linear-gradient(12deg, white, rgba(245, 220, 220, 0.75), white);
+        transform: matrix(0.99, 0.005, 0, 1.01, 0, 0);
+        filter: opacity(100%);
+    }
+    
+    .mainControlZone
+    {
+        border-radius: 5px;
+        box-shadow: -2px 2px 1px rgba(0, 0, 0, 0.6),
+                2px -2px 2px rgba(0, 100, 0, 0.6);
+        padding: 6px;
+    }
+    
+    .mainControlZone button
+    {
+        font-size: 12pt;
+    }
+
+    #playbackElement
+    {
+        z-index: 12;
+    }
+    </style>
+
+    <!-- All below-linked libraries, except firebase,
+     are (c) 2018 by Henry Heino -->
+    <!-- 3D Math Libraries -->
+    <script src = "Matrix.js"></script>
+    <script src = "Objects.js"></script>
+    <script src = "Vector.js"></script>
+    
+    <!-- General Math Libraries -->
+    <script src = "MathHelper.js"></script>
+    
+    <!-- Display Libraries -->
+    <script src = "JSHelper.js"></script>
+    <script src = "HTMLHelper.js"></script>
+    <script src = "TabbedDisplay.js"></script>
+    <script src = "SubWindowHelper.js"></script>
+    <script src = "StopMotionEditor.js"></script>
+</head>
+<body>
+    <h1 id="title" contenteditable="true" onkeyup="document.title = this.innerText;">[Su título estará aquí.]</h1>
+    <p id="controls"></p>
+    <div id="addedScenes" style="overflow-x:auto; width:100%; border:1px solid black; border-radius: 8px; box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.5) inset;"></div>
+    <div id="playbackElement"></div>
+
+    <div class = "logotipo"><img src="./logo.png"/></div>
+<script>
+var JavaScriptHelper = JSHelper;
+var JavaScriptHelp = JavaScriptHelper;
+
+JavaScriptHelp.getSpeechSynthesisVoices = function()
+{
+    var voices = {};
+
+    if(window.speechSynthesis)
+    {
+        var apiVoices = window.speechSynthesis.getVoices();
+        for(var i in apiVoices)
+        {
+            voices[i] = apiVoices[i].lang + " y " + apiVoices[i].name;
+        }
+    }
+
+    return voices;
+};
+
+JavaScriptHelper.getColorBasedOnTime = function(offset, divisorR, divisorG, divisorB, alpha)
+{
+    divisorR = divisorR || 10000;
+    divisorG = divisorG || 10000;
+    divisorB = divisorB || 10000;
+    alpha = alpha || 1.0;
+
+    var time = (new Date()).getTime();
+
+    var r = Math.floor(0.5 * 256 * (Math.sin(time / divisorR + offset) + 1)),
+    g = Math.floor(0.5 * 256 * (Math.sin(time / divisorG + offset) + 1)),
+    b = Math.floor(0.5 * 256 * (Math.sin(time / divisorB + offset) + 1));
+
+    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+};
+
+JavaScriptHelper.compressSlashes = function(text)
+{
+    var segements = text.split("\\");
+    var result = "";
+    var slashCount = 0;
+    var current;
+    for(var i = 0; i < segements.length; i++)
+    {
+        current = segements[i];
+        
+        if(current != "")
+        {
+            if(slashCount > 0)
+            {
+                result += slashCount;
+            }
+            slashCount = 0;
+
+            result += current;
+            
+            if(i + 1 < segements.length)
+            {
+                result += "\\";
+            }
+        }
+        else
+        {
+            slashCount++;
+        }
+    }
+
+    if(slashCount > 0)
+    {
+        result += "\\" + (slashCount - 2);
+    }
+
+    return result;
+};
+
+JavaScriptHelper.startsWithDigit = function(text)
+{
+    return text.length > 0 && (text.charAt(0)) >= '0' && text.charAt(0) <= '9';
+};
+
+JavaScriptHelper.decompressSlashes = function(text)
+{
+    var sections = text.split("\\");
+    var result = "";
+    var current = "";
+    for(var i = 0; i < sections.length; i++)
+    {
+        current = sections[i];
+        if( i > 0 && JavaScriptHelper.startsWithDigit(current))
+        {
+            result += "\\";
+            var digitSection = "";
+            while(JavaScriptHelper.startsWithDigit(current))
+            {
+                digitSection += current.charAt(0);
+                current = current.substring(1, current.length);
+            }
+            //console.log(digitSection);
+
+            var slashesToAdd = MathHelper.forceParseInt(digitSection);
+            for(var j = 0; j < slashesToAdd; j++)
+            {
+                result += "\\";
+            }
+            result += current;
+        }
+        else if( i > 0 )
+        {
+            result += "\\" + current;
+        }
+        else
+        {
+            result += current;
+        }
+    }
+
+    return result;
+};
+
+var WebGLHelper = {};
+
+WebGLHelper.fov = 70;
+
+WebGLHelper.vertexShaderSource = 
+`
+attribute vec4 a_position;
+attribute vec3 a_normal;
+attribute vec2 a_texCoord;
+
+uniform mat4 u_world;
+uniform mat4 u_camera;
+uniform mat4 u_view;
+uniform vec4 u_lightPosition;
+uniform vec3 u_cameraPosition;
+
+varying vec2 v_texCoord;
+varying vec3 v_normal;
+varying vec3 v_toLight;
+varying vec3 v_toCamera;
+
+void main()
+{
+    gl_Position = u_view * u_camera * u_world * a_position; // u_view * u_camera * u_world * 
+
+    v_normal = mat3(u_world) * (a_normal);
+
+    vec4 worldPos = u_world * a_position;
+    vec4 lightPos = u_lightPosition;
+
+    v_toLight = (lightPos - worldPos).xyz;
+    v_toCamera = u_cameraPosition - worldPos.xyz;
+
+    v_texCoord = a_texCoord;
+}
+`;
+
+WebGLHelper.fragmentShaderSource = 
+`
+precision mediump float;
+
+uniform sampler2D u_image;
+uniform float u_shine;
+uniform vec4 u_color;
+
+varying vec2 v_texCoord;
+varying vec3 v_normal;
+varying vec3 v_toLight;
+varying vec3 v_toCamera;
+
+void main()
+{
+    vec4 color = texture2D(u_image, v_texCoord);
+    color.a = 1.0;
+
+    vec3 normal = normalize(v_normal);
+    vec3 toLight = normalize(v_toLight.xyz);
+    vec3 toCamera = normalize(v_toCamera.xyz);
+
+    float lightValue = dot(toLight, normal);
+
+    vec3 halfVector = normalize(toLight + toCamera);
+    float specular = dot(normal, halfVector);
+
+    if(specular > 0.0 && lightValue > 0.0)
+    {
+        specular = pow(specular, u_shine);
+    }
+    else
+    {
+        specular = 0.0;
+    }
+
+    if(lightValue < 0.2)
+    {
+        lightValue = 0.2;
+    }
+
+    color.rgb *= lightValue;
+    color.rgb += specular;
+
+    gl_FragColor = color;
+}
+`;
+
+WebGLHelper.compileShader = function(gl, shaderType, shaderSource)
+{
+    gl = gl || WebGLHelper.gl;
+    
+    var shader = gl.createShader(shaderType);
+
+    gl.shaderSource(shader, shaderSource);
+
+    gl.compileShader(shader);
+
+    if(gl.getShaderParameter(shader, gl.COMPILE_STATUS))
+    {
+        return shader;
+    }
+    else
+    {
+        console.error("Shader Compile Error: " + gl.getShaderInfoLog(shader));
+
+        gl.deleteShader(shader);
+    }
+};
+
+WebGLHelper.linkProgram = function(gl, vertexShader, fragmentShader)
+{
+    var program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+
+    gl.linkProgram(program);
+
+    if(gl.getProgramParameter(program, gl.LINK_STATUS))
+    {
+        return program;
+    }
+    else
+    {
+        console.error("Program Link Error: " + gl.getProgramInfoLog(program));
+
+        gl.deleteProgram(program);
+    }
+};
+
+WebGLHelper.lookUpLocations = function(locationsToFind, lookupFunction)
+{
+    var locations = {};
+    for(var index = 0; index < locationsToFind.length; index++)
+    {
+        locations[ locationsToFind[index] ] = 
+                lookupFunction(locationsToFind[index]);
+    }
+
+    return locations;
+};
+
+WebGLHelper.getContext = function()
+{
+    if(!WebGLHelper.gl)
+    {
+        WebGLHelper.canvas = document.createElement("canvas");
+        WebGLHelper.gl = WebGLHelper.canvas.getContext("webgl")
+             || WebGLHelper.canvas.getContext("experimental-webgl");
+
+        var gl = WebGLHelper.gl;
+        
+        // Shader and setup.
+        WebGLHelper.vertexShader = WebGLHelper.compileShader(gl,
+             gl.VERTEX_SHADER, WebGLHelper.vertexShaderSource);
+        WebGLHelper.fragmentShader = WebGLHelper.compileShader(gl,
+             gl.FRAGMENT_SHADER, WebGLHelper.fragmentShaderSource);
+
+        WebGLHelper.program = WebGLHelper.linkProgram(gl, 
+                WebGLHelper.vertexShader, WebGLHelper.fragmentShader);
+        var program = WebGLHelper.program;
+
+        gl.useProgram(program);
+
+        WebGLHelper.gl.clearColor(0.0, 0.0, 1.0, 1.0);
+
+        // Create Matricies.
+        var worldMatrix = new Matrix(4, 4);
+
+        worldMatrix.toIdentityMatrix();
+        WebGLHelper.worldMatrix = worldMatrix;
+
+        var viewMatrix = Mat44Helper.perspective(WebGLHelper.fov * Math.PI / 180, // 70 degree view
+                1,
+                2000,
+                gl.drawingBufferHeight / gl.drawingBufferWidth).getInverse();
+        WebGLHelper.viewMatrix = viewMatrix;
+        
+        var cameraMatrix = new Matrix(4, 4);
+        cameraMatrix.toIdentityMatrix();
+        WebGLHelper.cameraMatrix = cameraMatrix;
+
+        var locationsToFind = ["u_world", "u_view", "u_camera"];
+
+        WebGLHelper.matrixLocations = {};
+
+        for(var index = 0; index < locationsToFind.length; index++)
+        {
+            WebGLHelper.matrixLocations[ locationsToFind[index] ] = 
+                    gl.getUniformLocation(WebGLHelper.program, locationsToFind[index]);
+        }
+
+        locationsToFind = ["a_position", "a_normal", "a_texCoord"];
+
+        WebGLHelper.attribLocations = {};
+
+        for(var index = 0; index < locationsToFind.length; index++)
+        {
+            WebGLHelper.attribLocations[ locationsToFind[index] ] = 
+                    gl.getAttribLocation(WebGLHelper.program, locationsToFind[index]);
+
+            if(WebGLHelper.attribLocations[ locationsToFind[index] ] === -1)
+            {
+                WebGLHelper.attribLocations[ locationsToFind[index] ] = 2;
+            }
+            console.log(locationsToFind[index] + ": " + WebGLHelper.attribLocations[ locationsToFind[index] ]);
+        }
+
+        WebGLHelper.vertexBuffer = WebGLHelper.gl.createBuffer();
+        WebGLHelper.gl.bindBuffer(WebGLHelper.gl.ARRAY_BUFFER, WebGLHelper.vertexBuffer);
+
+        var verticies = object3D.getScaledCubeVerticies(1 / 20);
+        WebGLHelper.verticies = verticies;
+
+        WebGLHelper.gl.enableVertexAttribArray(WebGLHelper.attribLocations.a_position);
+
+        WebGLHelper.gl.vertexAttribPointer(WebGLHelper.attribLocations.a_position, 
+                3, // Use 3 elements per calling of shader.
+                gl.FLOAT, // Data type.
+                false, // No normalization.
+                0, 0); // Stride and offset.
+
+        gl.bufferData(WebGLHelper.gl.ARRAY_BUFFER, new Float32Array(verticies),
+                gl.STATIC_DRAW);
+
+        WebGLHelper.normalsBuffer = WebGLHelper.gl.createBuffer();
+        WebGLHelper.gl.bindBuffer(WebGLHelper.gl.ARRAY_BUFFER, WebGLHelper.normalsBuffer);
+
+        var normals = object3D.getNormals(verticies, true);
+
+        WebGLHelper.gl.enableVertexAttribArray(WebGLHelper.attribLocations.a_normal);
+
+        WebGLHelper.gl.vertexAttribPointer(WebGLHelper.attribLocations.a_normal, 
+                3, // Use 3 elements per calling of shader.
+                gl.FLOAT, // Data type.
+                false, // No normalization.
+                0, 0); // Stride and offset.
+
+        gl.bufferData(WebGLHelper.gl.ARRAY_BUFFER, new Float32Array(normals),
+                gl.STATIC_DRAW);
+
+
+        WebGLHelper.texCoordsBuffer = WebGLHelper.gl.createBuffer();
+        WebGLHelper.gl.bindBuffer(WebGLHelper.gl.ARRAY_BUFFER, WebGLHelper.texCoordsBuffer);
+
+        var texCoords = object3D.getTextureLocations(verticies.length / 3);
+
+        WebGLHelper.gl.enableVertexAttribArray(WebGLHelper.attribLocations.a_texCoord);
+
+        WebGLHelper.gl.vertexAttribPointer(WebGLHelper.attribLocations.a_texCoord, 
+                2, // Use 2 elements per calling of shader.
+                gl.FLOAT, // Data type.
+                false, // No normalization.
+                0, 0); // Stride and offset.
+
+        gl.bufferData(WebGLHelper.gl.ARRAY_BUFFER, new Float32Array(texCoords),
+                gl.STATIC_DRAW);
+
+        WebGLHelper.lightPositionLocation = WebGLHelper.gl.getUniformLocation(program, "u_lightPosition");
+        WebGLHelper.cameraPositionLocation = WebGLHelper.gl.getUniformLocation(program, "u_cameraPosition");
+        WebGLHelper.shineLocation = WebGLHelper.gl.getUniformLocation(program, "u_shine");
+
+        WebGLHelper.lightPosition = new Vector3(0, 0.0, 3.0);
+        WebGLHelper.cameraPosition = new Vector3(0, 0.0, 3.0);
+        WebGLHelper.upDirection = new Vector3(0.0, 1.0, 0.0);
+        WebGLHelper.lookAt = new Vector3(0.0, 0.0, 0.0);
+
+        WebGLHelper.setSpecular(150.0);
+
+        WebGLHelper.updateLightLocation();
+        WebGLHelper.updateCameraLocation();
+
+        WebGLHelper.resetCameraMatrix();
+
+        WebGLHelper.updateMatricies(true, true, true);
+
+        WebGLHelper.gl.enable(gl.CULL_FACE);
+        WebGLHelper.gl.enable(gl.DEPTH_TEST);
+
+        WebGLHelper.createTexture();
+    }
+
+    return WebGLHelper.gl;
+};
+
+WebGLHelper.updateMatricies = function(updateView, updateWorld, updateCamera)
+{
+    var gl = WebGLHelper.getContext();
+
+    if(updateView)
+    {
+        gl.uniformMatrix4fv(WebGLHelper.matrixLocations.u_view, false, 
+                WebGLHelper.viewMatrix.to1DArray());
+    }
+
+    if(updateWorld)
+    {
+        gl.uniformMatrix4fv(WebGLHelper.matrixLocations.u_world, false, 
+                WebGLHelper.worldMatrix.to1DArray());
+    }
+
+    if(updateCamera)
+    {
+        gl.uniformMatrix4fv(WebGLHelper.matrixLocations.u_camera, false, 
+                WebGLHelper.cameraMatrix.to1DArray());
+    }
+};
+
+WebGLHelper.clear = function()
+{
+    var gl = WebGLHelper.getContext();
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+};
+
+WebGLHelper.resizeTo = function(width, height)
+{
+    var gl = WebGLHelper.getContext();
+
+    if(width !== WebGLHelper.gl.canvas.width || height !== WebGLHelper.canvas.height)
+    {
+        WebGLHelper.gl.canvas.width = width;
+        WebGLHelper.gl.canvas.height = height;
+
+        WebGLHelper.gl.viewport(0, 0, 
+                WebGLHelper.gl.drawingBufferWidth, WebGLHelper.gl.drawingBufferHeight);
+
+        WebGLHelper.viewMatrix = Mat44Helper.perspective(WebGLHelper.fov * Math.PI / 180, // 70 degree view
+                    1, // zNear
+                    2000, // zFar
+                    gl.drawingBufferHeight / gl.drawingBufferWidth); // Aspect
+
+        //WebGLHelper.viewMatrix.toIdentityMatrix();
+
+        WebGLHelper.updateMatricies(true, false, false);
+    }
+};
+
+WebGLHelper.updateLightLocation = function()
+{
+    WebGLHelper.getContext();
+
+    var lightPositionArray = WebGLHelper.lightPosition.toArray();
+    lightPositionArray.push(0.0);
+
+    WebGLHelper.gl.uniform4fv(WebGLHelper.lightPositionLocation, lightPositionArray);
+};
+
+WebGLHelper.updateCameraLocation = function()
+{
+    WebGLHelper.getContext();
+
+    var cameraPositionArray = WebGLHelper.cameraPosition.toArray();
+
+    WebGLHelper.gl.uniform3fv(WebGLHelper.cameraPositionLocation, cameraPositionArray);
+};
+
+WebGLHelper.resetCameraMatrix = function()
+{
+    WebGLHelper.getContext();
+
+    WebGLHelper.cameraMatrix = Mat44Helper.lookAt(WebGLHelper.cameraPosition,
+        WebGLHelper.upDirection, WebGLHelper.lookAt);
+};
+
+WebGLHelper.setSpecular = function(shine)
+{
+    WebGLHelper.getContext();
+
+    WebGLHelper.gl.uniform1f(WebGLHelper.shineLocation, shine);
+};
+
+WebGLHelper.createTexture = function()
+{
+    var gl = WebGLHelper.getContext();
+    var texture = gl.createTexture();
+
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    // Allow non-power of two textures.
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+    return texture;
+};
+
+WebGLHelper.imageToTexture = function(image)
+{
+    var gl = WebGLHelper.getContext();
+
+    try
+    {
+        gl.texImage2D(gl.TEXTURE_2D, //Target
+            0, // Level
+            gl.RGBA, gl.RGBA, // Internal and external format.
+            gl.UNSIGNED_BYTE, // Source format/
+            image); // Source
+    }
+    catch(e)
+    {
+        console.warn(e);
+    }
+};
+
+WebGLHelper.renderObject = function()
+{
+    var gl = WebGLHelper.getContext();
+    gl.drawArrays(gl.TRIANGLES, 
+        0, // Offset
+        WebGLHelper.verticies.length / 3); // Verticies length.
+};
+
+WebGLHelper.setClearColorString = function(colorString)
+{
+    var gl = WebGLHelper.getContext();
+
+    if(colorString != WebGLHelper.lastColorString)
+    {
+        var parts = HTMLHelper.colorStringToArray(colorString);
+
+        if(parts.length >= 4)
+        {
+            gl.clearColor(parts[0], parts[1], parts[2], parts[3]);
+        }
+        else
+        {
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        }
+
+        console.log("Updated!");
+        WebGLHelper.lastColorString = colorString;
+    }
+};
+</script>
+
+    <script>
+        var LOG_ERRORS=false;
+        
+        function loadFile(fileName, onDone)
+        {
+            var openFileWindow = SubWindowHelper.create(
+            {
+                title: "Seleccione su Archivo",
+                height: "auto",
+                classPrefix: "file"
+            });
+            
+            var contentArea = openFileWindow.getContent();
+            
+            var fileInput = document.createElement("input");
+            var progress = document.createElement("progress");
+            
+            fileInput.type = "file";
+            progress.style.display = "none";
+            progress.max = 1.0;
+
+            
+            //contentArea.style.backgroundImage = "linear-gradient(35deg, rgba(255, 255, 255, 0.9), rgba(0, 255, 255, 0.8)";
+
+            var container = document.createElement("div");
+            /*container.style.maxWidth = "400px";
+            container.style.marginLeft = "auto";
+            container.style.marginRight = "auto";
+            container.style.borderRadius = "10px";
+            container.style.padding = "10px";
+            container.style.boxShadow = "5px 4px 3px rgba(0, 0, 0, 0.6)";
+            container.style.backgroundColor = "white";
+            container.style.transition = "1s ease all";*/
+            
+            HTMLHelper.addLabel("Favor de seleccionar " + fileName + ".", container, "div");
+            
+            container.appendChild(fileInput);
+            container.appendChild(progress);
+            
+            contentArea.appendChild(container);
+
+            fileInput.onchange = function (e)
+            {
+                try
+                {
+
+                    var fileReader = new FileReader();
+                    progress.style.display = "block";
+
+                    fileReader.onload = function (e)
+                    {
+                        var text = e.target.result;
+
+                        onDone(text, fileInput.files[0]);
+                        openFileWindow.close();
+                    };
+                    fileReader.onprogress = function (e)
+                    {
+                        progress.innerHTML = e.loaded / e.total;
+                        progress.value = e.loaded / e.total;
+                    };
+                    console.log(typeof e.target.files[0]);
+                    window.fileReader = fileReader;
+                    window.file = e.target.files[0];
+                    setTimeout(function ()
+                    {
+                        fileReader.readAsText(e.target.files[0]);//, "UTF-8");
+                    }, 10);
+                }
+                catch (e)
+                {
+                    HTMLHelper.addLabel("<p>¡Era un problema! No podemos abrirlo. Su problema está aqui, pero es posible que sea en íngles. El programa que está usando para navegar la red necesita poder dar los problemas en español. El problema es &ldquo;"+e+".&rdquo;</p>", container, "div");
+                }
+            };
+        }
+
+        function Video(addTo, src, w, h)
+        {
+            this.element = document.createElement("video");
+            this.element.addEventListener("load", function (e)
+            {
+                this.element.crossOrigin = "anonymous";
+            });
+            this.element.style.width = "400px";
+            //this.element.crossOrigin = "";
+            this.element.controls = true;
+            this.element.src = src || "";
+            this.src = src || "";
+            this.previewCanvas = document.createElement("canvas");
+            this.previewCanvas.width = (w || 200);
+            this.previewCanvas.height = (h || 100);
+            this.startPosition = 0;
+            this.endPosition = 0;
+            this.lastTime = 0;
+            this.audioEnabled=true;
+            this.ended=true;
+
+            this.filterScriptText = "function (ctx, tiempoDespuesDeEmpezar, tiempoAlFin) { }";
+            this.filterScript = function (ctx, timeSinceStart, timeLeft)
+            {
+                
+            };
+            this.cropWidth = 0;
+            this.cropHeight = 0;
+            this.cropX = 0;
+            this.cropY = 0;
+            var bufferCanvas = document.createElement("canvas");
+            bufferCanvas.width = this.previewCanvas.width;
+            bufferCanvas.height = this.previewCanvas.height;
+            var bufferCtx = bufferCanvas.getContext("2d");
+            if (addTo)
+            {
+                addTo.appendChild(this.previewCanvas);
+                addTo.appendChild(this.element);
+            }
+            this.previewCtx = this.previewCanvas.getContext("2d");
+
+            
+            this.load = function (src)
+            { this.src=src || "";this.element.src = this.src; };
+            this.reload = function (addTo)
+            {
+                var oldRate = this.element.playbackRate * 1;
+                this.element = document.createElement("video");
+                //this.element.crossOrigin = "anonymous";
+                //this.element.crossOrigin = "";
+                this.element.addEventListener("load", function (e)
+                {
+                    this.element.crossOrigin = "anonymous";
+                });
+                this.element.playbackRate = oldRate;
+                this.element.controls = true;
+                this.element.src = this.src || "";
+                this.previewCanvas = document.createElement("canvas");
+                this.previewCanvas.width = (w || 200);
+                this.previewCanvas.height = (h || 100);
+                try{
+                    this.filterScript = eval(this.filterScriptText);
+                }catch(e)
+                {
+
+                }
+                if (addTo)
+                {
+                    addTo.appendChild(this.previewCanvas);
+                    addTo.appendChild(this.element);
+                }
+                this.previewCtx = this.previewCanvas.getContext("2d");
+            };
+            this.loadFilterScript = function (script)
+            {
+                try
+                {
+                    this.filterScriptText = script;
+                    this.filterScript = eval(script);
+                    return true;
+                }catch(e){
+                    return e;
+                }
+            };
+            this.save = function ()
+            {
+                return "video "+[this.src, this.startPosition, this.endPosition, this.filterScriptText.split(",").join("_~COMMA~_").split("\n").join("_~LINE~_"), this.cropX, this.cropY, this.cropWidth, this.cropHeight, this.audioEnabled?'1':'0', this.element.playbackRate, 8].join(",");
+            };
+
+            this.setAudioEnabled=function(enabled)
+            {
+                this.audioEnabled=enabled;
+                if(this.element.audioTracks && this.element.audioTracks.length > 0)
+                {
+                    this.element.audioTracks[0].enabled=enabled;
+                }
+                else
+                {
+                    if(this.audioEnabled)
+                    {
+                        this.element.volume=1;
+                    }
+                    else
+                    {
+                        this.element.volume=0;
+                    }
+                }
+            };
+
+            this.loadFromSave = function (save)
+            {
+                var spl=save.substring(save.search(" ") + 1, save.length).split(",");
+                this.src = spl[0];
+                this.element.src = this.src || "";
+                
+                this.startPosition = 1 < spl.length?spl[1]:0;
+                this.endPosition = 2 < spl.length ? spl[2] : 0;
+                if (spl.length > 7)
+                {
+                    this.filterScriptText = spl[3].split("_~COMMA~_").join(",").split("_~LINE~_").join("\n");
+                    try
+                    {
+                        this.filterScript = eval(this.filterScriptText);
+                    }
+                    catch (e)
+                    {
+                        this.filterScript = function (ctx) { ctx.font = "12pt 'Times New Roman'"; ctx.fillText(e, 50, 50); };
+                    }
+                    try
+                    {
+                        this.cropX = parseFloat(spl[4]);
+                        this.cropY = parseFloat(spl[5]);
+                        this.cropWidth = parseFloat(spl[6]);
+                        this.cropHeight = parseFloat(spl[7]);
+                        if(spl.length > 8)
+                        {
+                            this.setAudioEnabled(spl[8] !== '0');
+
+                            if(spl.length > 9)
+                            {
+                                this.element.playbackRate = MathHelper.forceParseFloat(spl[9]);
+                            }
+                        }
+                    }
+                    catch (e)
+                    {
+
+                    }
+                }
+                //this.element.crossOrigin = "anonymous";
+            };
+            this.getDuration=function()
+            {
+                if (this.endPosition === undefined)
+                {
+                    //this.endPosition = 0;
+                }
+                return (this.element.duration - this.startPosition - this.endPosition);//(this.element.duration < this.endPosition ? 0 : (this.element.duration - this.endPosition)));
+            };
+            /*var filterCanvas = document.createElement("canvas");
+            filterCanvas.width = window.innerWidth;
+            filterCanvas.height = window.innerHeight * 0.9;
+            var filterCtx = filterCanvas.getContext("2d");
+            document.body.appendChild(filterCanvas);*/
+            this.runFilter = function (ctx, time, timeLeft)
+            {
+                try
+                {
+                    
+                    //filterCtx.drawImage(ctx.canvas, 0, 0);
+                    if (bufferCanvas.width !== ctx.canvas.width || bufferCanvas.height !== ctx.canvas.height)
+                    {
+                        bufferCanvas.width = ctx.canvas.width;
+                        bufferCanvas.height = ctx.canvas.height;
+                        bufferCtx = bufferCanvas.getContext("2d");
+                    }
+                    if(this.filterScript !== undefined && this.filterScript !== '')
+                    {
+                        this.filterScript(ctx, bufferCtx, time, timeLeft, this);
+                    }
+                    //ctx.drawImage(filterCtx.canvas, 0, 0);
+                }
+                catch(e)
+                {
+                    if(LOG_ERRORS)
+                    {
+                     ctx.font = "8pt 'Times New Roman'";
+                     ctx.fillText(e, 50, 50);
+                    }
+                }
+            };
+            this.drawPreview = function ()
+            {
+                this.previewCtx.font="6pt 'Times New Roman'";
+                this.previewCtx.fillText(this.element.src, 0, 0);
+
+                this.element.play();
+                //this.element.crossOrigin = "use-credentials";
+                var me = this;
+                setTimeout(function ()
+                {
+                    me.element.pause();
+                    //me.element.crossOrigin = "use-credentials";
+                    /*var width = me.element.videoHeight * (me.previewCtx.canvas.width / me.element.videoWidth);
+                    var widthRatio=me.element.videoWidth/width;
+                    var heightRatio=me.element.videoHeight/me.previewCtx.canvas.height;
+                    me.previewCtx.drawImage(me.element, -me.cropX*widthRatio, -me.cropY*heightRatio, me.previewCtx.canvas.width+me.cropWidth*widthRatio, width+me.cropHeight*heightRatio);
+                    me.runFilter(me.previewCtx, 0, me.getDuration());*/
+                    me.draw(me.previewCtx);
+                    me.goToRealLocation(0);
+                }, 200);
+            };
+            this.updateEnded=function()
+            {
+                this.ended=this.getCurrentTime() >= this.getDuration() - 0.1 || this.element.ended;
+            };
+            this.getOver = function ()
+            {
+                return this.ended;// && this.getRealProgress() >= 0.75;
+            };
+            this.pause = function ()
+            {
+                this.element.pause();
+            };
+            this.getProgress = function ()
+            {
+                return this.lastTime / this.getDuration();
+            };
+            this.getRealProgress = function ()
+            {
+                return this.getCurrentTime() / this.getDuration();
+            };
+            this.play = function ()
+            {
+                //this.element.crossOrigin = "use-credentials";
+                //this.element.play();
+                //window.video = this.element;
+                try
+                {
+                    this.element.play();
+                    this.updateEnded();
+                }
+                catch (e)
+                {
+                    console.warn(e);
+                }
+            };
+            this.goToRealLocation = function (position)
+            {
+                try
+                {
+                    this.element.currentTime = position + this.startPosition;
+                    this.updateEnded();
+                }
+                catch (e)
+                {
+                    try
+                    {
+                        this.element.currentTime = 0;
+                    }
+                    catch (e)
+                    {
+                        console.warn(e);
+                    }
+                }
+            };
+            this.goToLocation = function (percentage)
+            {
+                //console.log(this.element.currentTime + " " + Math.floor(percentage * (this.element.duration)) + "   % was " + percentage);
+                //console.log(this.element);
+                window.video = this.element;
+                this.goToRealLocation(Math.floor(percentage * this.getDuration()));
+                this.updateEnded();
+            };
+            this.firstTime = true;
+            this.startSection = function ()
+            {
+                this.goToLocation(0);
+                this.element.ended = false;
+                this.setAudioEnabled(this.audioEnabled);
+                this.play();
+                this.updateEnded();
+            };
+            this.endSection = function ()
+            {
+                this.goToLocation(0);
+                this.element.ended = false;
+                this.element.pause();
+                this.updateEnded();
+            };
+            this.getCurrentTime=function()
+            {
+                window.duration = this.getDuration();
+                window.nowTime = this.element.currentTime - this.startPosition;
+                window.startPosition = this.startPosition;
+                if(this.element.currentTime-this.startPosition > this.getDuration())
+                {
+                    this.element.ended=true;
+                }
+                return this.element.currentTime-this.startPosition;
+            };
+            this.draw = function (ctx)
+            {
+                window.video = this.element;
+                var widthRatio = this.element.videoWidth / ctx.canvas.width;
+                var heightRatio = this.element.videoHeight / ctx.canvas.height;
+                if (ctx.canvas.width < ctx.canvas.height)
+                {
+                    var width = ctx.canvas.width;
+                    var height = this.element.videoHeight * (ctx.canvas.width / this.element.videoWidth);
+                    widthRatio = ctx.canvas.width;
+                    heightRatio = ctx.canvas.height;
+                    ctx.drawImage(this.element, -this.cropX * widthRatio, -this.cropY * heightRatio, width + this.cropWidth * widthRatio, height + this.cropHeight * heightRatio);
+                }
+                else
+                {
+                    var width = this.element.videoWidth * (ctx.canvas.height / this.element.videoHeight);
+                    var height = ctx.canvas.height;
+                    widthRatio = ctx.canvas.width;
+                    heightRatio = ctx.canvas.height;
+                    ctx.drawImage(this.element, -this.cropX * widthRatio, -this.cropY * heightRatio, width + this.cropWidth * widthRatio, height + this.cropHeight * heightRatio);
+                }
+                this.runFilter(ctx, this.getCurrentTime(), this.getDuration());
+                this.updateEnded();
+            };
+            this.drawSection=function(ctx)
+            {
+                this.lastTime = this.getCurrentTime();
+
+                this.draw(ctx);
+                /*if(this.getDuration() < this.lastTime)
+                {
+                    this.element.pause();
+                    this.element.ended = true;
+                    return true;
+                }*/
+                this.updateEnded();
+                return this.getOver();
+            };
+        }
+
+        function Text(text, length, addTo, w, h, xVel, yVel, wWrap)
+        {
+            this.textAlignReplacements = 
+            {
+                "izquierda": "left",
+                "izquierdo": "left",
+                "derecho": "right",
+                "derecha": "right",
+                "alta": "top",
+                "baja": "bottom",
+                "arriba": "top",
+                "abaja": "bottom",
+                "abajo": "bottom",
+                "centro": "center"
+            };
+
+
+            this.element = document.createElement("canvas");
+            this.element.width = w || 100;
+            this.element.height = h || window.innerHeight*(this.element.width/(window.innerWidth-20));
+            this.element.style.border = "1px solid green";
+            if (addTo)
+            {
+                addTo.appendChild(this.element);
+            }
+            this.ctx = this.element.getContext("2d");
+            this.length = length || 20;
+            this.frameLength = 100;
+            this.frameNumber = 0;
+            this.lastTime = new Date().getTime();
+            this.paused = false;
+            this.done = false;
+            this.text = text;
+            this.bgColor = "rgba(255, 255, 255, 0.8)";
+            this.color = "rgba(0, 0, 0, 0.9)";
+            this.font = "20px Serif";
+            this.xVelocity = xVel||0;
+            this.yVelocity = yVel||0;
+            this.wordWrap = wWrap||undefined;
+            this.wrapX=100;
+            this.originalWrapX=100;
+            this.wrapXVelocity=0;
+            this.x = 0;
+            this.y = 0;
+            this.originalX = this.x;
+            this.originalY = this.y;
+            this.textAlign="izquierda";
+            this.textBaseline="arriba";
+            var me=this;
+            me.startSection = function ()
+            {
+                me.frameNumber = 0;
+                me.play();
+                me.done = false;
+            };
+            me.load = function (text, color, font, length, frameLength, bgColor, x, y, xVel, yVel, wordWrap, textAlign, textBaseline, wrapX, wrapXVelocity)
+            {
+                this.text = text;
+                me.color = color;
+                me.font = font;
+                me.length = length;
+                me.frameLength = frameLength;
+                me.bgColor = bgColor;
+                me.x = x;
+                me.y = y;
+                me.xVelocity = xVel || 0.0;
+                me.yVelocity = yVel || 0.0;
+                me.wordWrap = wordWrap || false;
+                me.originalX = me.x;
+                me.originalY = me.y;
+                me.textAlign=textAlign;
+                me.textBaseline=textBaseline;
+                me.wrapX=wrapX||100;
+                me.wrapXVelocity=wrapXVelocity||0;
+                me.originalWrapX=me.wrapX;
+            };
+            me.reload = function (addTo)
+            {
+                me.element = document.createElement("canvas");
+                me.element.width = 100;
+                me.element.height = window.innerHeight * (me.element.width / (window.innerWidth - 20));
+                me.element.style.border = "1px solid green";
+                if (addTo)
+                {
+                    addTo.appendChild(me.element);
+                }
+                me.ctx = me.element.getContext("2d");
+                me.x = me.originalX;
+                me.y = me.originalY;
+                me.wrapX=me.originalWrapX;
+            };
+            me.save = function ()
+            {
+                return "text "+[(me.text+"").split("~").join("`^|"), me.color, me.font, me.length, me.frameLength, me.bgColor, me.originalX, me.originalY, me.xVelocity, me.yVelocity, me.wordWrap?1:0, me.textAlign, me.textBaseline, me.originalWrapX, me.wrapXVelocity].join("~");
+            };
+            me.loadFromSave = function (save)
+            {
+                save = save.substring(save.search(" ") + 1, save.length);
+                var items = save.split("~");
+                me.load(items[0].split("`^|").join("~"), items[1], items[2], parseInt(items[3]), parseInt(items[4]), items[5], parseInt(items[6]), parseInt(items[7]), parseFloat(items[8]),
+                    parseFloat(items[9]), items[10] == "1", items[11], items[12], 13>=items.length?1:parseFloat(items[13]), 14>=items.length?0:parseFloat(items[14]));
+            };
+
+            me.applyTextAlignToCtx = function(ctx)
+            {
+                var textAlign = me.textAlign;
+                var textBaseline = me.textBaseline;
+
+                if(textAlign in me.textAlignReplacements)
+                {
+                    textAlign = me.textAlignReplacements[textAlign];
+                }
+
+                if(textBaseline in me.textAlignReplacements)
+                {
+                    textBaseline = me.textAlignReplacements[textBaseline];
+                }
+
+                ctx.textAlign=textAlign;
+                ctx.textBaseline=textBaseline;
+            };
+
+            me.drawSelf = function (ctx)
+            {
+                ctx.save();
+                me.applyTextAlignToCtx(ctx);
+                ctx.fillStyle = me.bgColor;
+                ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.scale(ctx.canvas.width / (window.innerWidth - 20), ctx.canvas.height / (window.innerHeight * 3 / 4));
+                var width = window.innerWidth - 20;
+                var height=window.innerHeight * 3/4;
+                ctx.fillStyle = me.color;
+                //ctx.textBaseline = "top";
+                //ctx.textAlign = "left";
+                ctx.font = me.font;
+                var textLines = (me.text || "").split("\n");
+                var h = 0;
+                for (var i = 0; i < textLines.length; i++)
+                {
+                    var wrapWidth = me.wrapX/100*width;
+                    if (me.wordWrap && ctx.measureText(textLines[i]).width + me.x/100*width > wrapWidth)
+                    {
+                        var splitText = textLines[i].split(" ");
+                        var x = 0;
+                        var wordWidth;
+                        var spaceWidth = ctx.measureText(" ").width;
+                        for(var word=0; word < splitText.length; word++)
+                        {
+                            wordWidth = ctx.measureText(splitText[word]).width+spaceWidth;
+                            if (wordWidth > wrapWidth)
+                            {
+                                var currentText = splitText[word];
+                                for (var letterNumber = 0; letterNumber < currentText.length; letterNumber++)
+                                {
+                                    ctx.fillText(currentText.charAt(letterNumber), me.x/100 * width + x, me.y/100 * height+ h);
+                                    x += ctx.measureText(currentText.charAt(letterNumber)).width;
+                                    if (x + me.x/100*width >= wrapWidth)
+                                    {
+                                        h += ctx.measureText("W.").width;
+                                        x = 0;
+                                    }
+                                }
+                                h += ctx.measureText("W.").width;
+                                x = 0;
+                                continue;
+                            }
+                            else if (x + me.x/100*width + wordWidth >= wrapWidth)
+                            {
+                                h += ctx.measureText("W.").width;
+                                x = 0;
+                            }
+                            ctx.fillText(splitText[word], me.x/100 * width + x, me.y/100 * height + h);
+                            x += wordWidth;
+                        }
+                    }
+                    else
+                    {
+                        ctx.fillText(textLines[i], me.x/100 * width, me.y/100*height + h);
+                    }
+                    h += ctx.measureText("W.").width;
+                }
+                ctx.restore();
+            };
+            this.drawPreview = function ()
+            {
+                this.drawSelf(this.ctx);
+            };
+            this.getOver = function ()
+            {
+                return this.done;
+            };
+            this.pause = function ()
+            {
+                this.paused = true;
+            };
+            this.getProgress = function ()
+            {
+                return this.frameNumber/this.length;
+            };
+            this.play = function ()
+            {
+                this.paused = false;
+                this.lastTime = (new Date()).getTime();
+            };
+            this.goToLocation = function (percentage)
+            {
+                this.frameNumber = Math.floor(percentage * (this.length - 1));
+                //y=mx+b
+                //y=yVel*percent+originalY
+                this.y = this.yVelocity * this.frameNumber + this.originalY;
+                this.x = this.xVelocity * this.frameNumber + this.originalX;
+            };
+            this.drawSection = function (ctx)
+            {
+                var nowTime = (new Date()).getTime();
+                if (nowTime > this.frameLength+this.lastTime)
+                {
+                    
+                    this.y = this.yVelocity * this.frameNumber + this.originalY;
+                    this.x = this.xVelocity * this.frameNumber + this.originalX;
+                    this.wrapX=this.wrapXVelocity * this.frameNumber + this.originalWrapX;
+                    if (!this.paused)
+                    {
+                        this.frameNumber++;
+                    }
+                    if (this.frameNumber >= this.length)
+                    {
+                        this.done = true;
+                        return this.done;
+                    }
+                    else
+                    {
+                        this.done = false;
+                    }
+                    this.lastTime = nowTime;
+                }
+                this.drawSelf(ctx);
+
+                return this.getOver();
+            };
+        }
+
+        function VideoImage(addTo, src, w, h)
+        {
+            this.element = new Image();
+            this.element.src = src || "";
+            this.src = src || "";
+            this.previewCanvas = document.createElement("canvas");
+            this.previewCanvas.width = (w || 150);
+            this.previewCanvas.height = (h || 100);
+            this.duration = 0;
+            this.lastTime = new Date().getTime();
+            this.lastMSTime = new Date().getTime();
+            this.currentTime = 0;
+            this.currentFrame = 0;
+            this.numberOfFrames = 100;
+            this.frameLength = 10;
+            //this.element.crossOrigin = "Anonymous";
+            this.x = 0;
+            this.y = 0;
+            this.xScale = 1;
+            this.yScale = 1;
+            this.xScaleVelocity=0;
+            this.yScaleVelocity=0;
+            this.xVelocity=0;
+            this.yVelocity=0;
+            if (addTo)
+            {
+                addTo.appendChild(this.previewCanvas);
+            }
+            this.previewCtx = this.previewCanvas.getContext("2d");
+            
+
+
+            this.load = function (src)
+            { 
+                this.src = src || ""; 
+                this.element.src = this.src;
+                //this.element.crossOrigin = "Anonymous"; 
+            };
+            
+            this.reload = function (addTo)
+            {
+                this.element = new Image();
+                this.element.src = this.src || "";
+                //this.element.crossOrigin = "Anonymous";
+                this.previewCanvas = document.createElement("canvas");
+                this.previewCanvas.width = (w || 100);
+                this.previewCanvas.height = (h || 100);
+                this.duration = this.numberOfFrames;
+                this.currentFrame = 0;
+                if (addTo)
+                {
+                    addTo.appendChild(this.previewCanvas);
+                }
+            };
+            this.save = function ()
+            {
+                return "image " + [this.src, this.numberOfFrames, this.frameLength, this.x, this.y, this.xScale, this.yScale, this.xVelocity, this.yVelocity, this.xScaleVelocity, this.yScaleVelocity].join(",");//this.element.src + "," + this.numberOfFrames;
+            };
+            this.loadFromSave = function (save)
+            {
+                var spl = save.substring(save.search(" ") + 1, save.length).split(",");
+                this.src = spl[0];
+                this.element.src = this.src || "";
+
+                this.numberOfFrames = 1 < spl.length ? spl[1] : 0;
+                this.frameLength = 2 < spl.length ? spl[2] : 10;
+                if(6 < spl.length)
+                {
+                    this.x = parseInt(spl[3]);
+                    this.y = parseInt(spl[4]);
+                    this.xScale = parseFloat(spl[5]);
+                    this.yScale = parseFloat(spl[6]);
+                    if(10 < spl.length)
+                    {
+                        this.xVelocity = parseFloat(spl[7]);
+                        this.yVelocity = parseFloat(spl[8]);
+                        this.xScaleVelocity = parseFloat(spl[9]);
+                        this.yScaleVelocity = parseFloat(spl[10]);
+                    }
+                }
+                
+                
+                //this.element.crossOrigin = "Anonymous";
+            };
+            this.getDuration = function ()
+            {
+                return this.numberOfFrames*this.frameLength;//(this.element.duration - this.startPosition - (this.element.duration < this.endPosition ? 0 : (this.element.duration - this.endPosition)));
+            };
+            this.draw=function(ctx)
+            {
+                //this.element.crossOrigin = "Anonymous";
+                ctx.save();
+                ctx.scale(this.currentXScale, this.currentYScale);
+                
+                try
+                {
+                    if (ctx.canvas.width < ctx.canvas.height)
+                    {
+                        ctx.drawImage(this.element, this.currentX * ctx.canvas.width/150, this.currentY * ctx.canvas.height/100, ctx.canvas.width, this.element.height * (ctx.canvas.width / this.element.width));
+                    }
+                    else
+                    {
+                        ctx.drawImage(this.element, this.currentX * ctx.canvas.width/150, this.currentY * ctx.canvas.height/100, this.element.width * (ctx.canvas.height / this.element.height), ctx.canvas.height);
+                    }
+                }
+                catch(e)
+                {
+                    console.warn(e);
+                }
+                ctx.restore();
+            }
+            this.drawPreview = function ()
+            {
+                var me = this;
+                
+                window.image = me;
+                var ctx = me.previewCtx;
+                ctx.textBaseline="top";
+                this.currentX=this.x;
+                this.currentY=this.y;
+                this.currentXScale=this.xScale;
+                this.currentYScale=this.yScale;
+                
+                ctx.fillText("Loading...", 0, 0);
+                setTimeout(function ()
+                {
+                    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    me.draw(ctx);//me.goToRealLocation(0);
+                    //me.element.pause();//
+                }, 200);
+            };
+            this.getOver = function ()
+            {
+                return this.currentFrame > this.numberOfFrames;
+            };
+            this.pause = function ()
+            {
+                this.paused = true;
+            };
+            this.getTimeGone = function ()
+            {
+                return this.currentTime;
+            };
+            this.getProgress = function ()
+            {
+                return this.currentFrame/this.numberOfFrames;
+            };
+            this.getRealProgress = function ()
+            {
+                return this.currentFrame / this.numberOfFrames * this.frameLength;
+            };
+            this.play = function ()
+            {
+                this.paused = false;
+            };
+            this.goToRealLocation = function (position)
+            {
+                this.currentFrame = position;
+            };
+            this.goToLocation = function (percentage)
+            {
+                //console.log(this.element.currentTime + " " + Math.floor(percentage * (this.element.duration)) + "   % was " + percentage);
+                //console.log(this.element);
+                this.goToRealLocation(Math.floor(percentage*this.numberOfFrames));
+            };
+            this.firstTime = true;
+            this.startSection = function ()
+            {
+                this.currentX=this.x;
+                this.currentY=this.y;
+                this.currentXScale=this.xScale;
+                this.currentYScale=this.yScale;
+                this.goToLocation(0);
+                this.currentFrame = 0;
+                this.play();
+                this.ended = false;
+                this.lastTime = (new Date()).getTime();
+            };
+            this.endSection = function ()
+            {
+                this.goToLocation(0);
+                this.currentFrame = 0;
+                this.paused = false;
+
+            };
+            this.getCurrentTime = function ()
+            {
+                return this.currentFrame*this.frameLength;
+            };
+            this.drawSection = function (ctx)
+            {
+                this.currentTime = (new Date()).getTime();
+                if (this.currentTime - this.lastTime > this.frameLength)
+                {
+                    //console.log(2);
+                    //this.x++;
+                    this.currentX+=this.xVelocity;
+                    this.currentY+=this.yVelocity;
+                    this.currentXScale+=this.xScaleVelocity;
+                    this.currentYScale+=this.yScaleVelocity;
+                    this.currentFrame++;
+                    this.lastTime = this.currentTime;
+                }
+                this.draw(ctx);
+                if (this.currentFrame >= this.numberOfFrames)
+                {
+                    this.pause();
+                    this.ended = true;
+                    return true;
+                }
+                return this.getOver();
+            };
+        }
+
+	function SplitObject(src, type, addTo)
+	{
+	    this.element=document.createElement("table");
+	    this.content=document.createElement("tbody");
+	    this.mainRow=document.createElement("tr");
+	    this.editors=[];
+	    
+	    this.createEditor=function(loadData)
+	    {
+	    	var container=document.createElement("td"),
+		    	controls=document.createElement("div"),
+		    	scenes=document.createElement("div"),
+		    	title=document.createElement("h2"),
+		    	playbackArea=document.createElement("div");
+            title.innerHTML="[Su título estará aquí.]";
+            title.contentEditable=true;
+            title.style.border="1px solid black";
+            title.style.backgroundColor="white";
+            title.style.padding="10px";
+            container.style.margin="0px";
+            container.style.border="1px solid black";
+            var editor=new MovieMaker(controls, scenes, title, playbackArea);
+	    	this.editors.push(editor);
+	    	editor.loadControls();
+	    	if(loadData)
+	    	{
+	    	    editor.load(loadData);
+	    	}
+	    	this.mainRow.appendChild(container);
+	    	container.appendChild(title);
+	    	container.appendChild(controls);
+	    	container.appendChild(scenes);
+	    	container.appendChild(playbackArea);
+	    };
+	    
+	    for(var i=0; i<2; i++)
+	    {
+		    this.createEditor();
+	    }
+	    
+	    var playing=false, ended=false;
+	    
+	    this.load=function(jsonData)
+	    {
+             console.log("Estamos esperando...");
+             if(typeof jsonData === "object")
+             {
+	        	this.editors=[];
+	        	this.mainRow.innerHTML="";
+	        	
+	        	for(var i in jsonData)
+	        	{
+	           	 this.createEditor(jsonData[i]);
+	        	}
+		   }
+              else if(jsonData !== undefined && jsonData.appendChild)
+              {
+                  this.reload(jsonData);
+              }
+	    };
+         this.reload=function(htmlElement)
+         {
+             console.log("Estamos esparando una otra ves...");
+             var save=this.save();
+             this.element=document.createElement("table");
+             this.content=document.createElement("tbody");
+             this.mainRow=document.createElement("tr");
+             htmlElement.appendChild(this.element);
+             this.element.appendChild(this.content);
+             this.content.appendChild(this.mainRow);
+
+	        this.editors=[];
+
+
+             this.loadFromSave(save);
+         };
+	    this.save = function ()
+            {
+            	var saves = {};
+            	for(var i in this.editors)
+            	{
+            		saves[i]=this.editors[i].save(true);
+            	}
+            	
+                return "split " + JSON.stringify(saves);
+            };
+            this.pause = function ()
+            {
+                for(var i in this.editors)
+                {
+                    this.editors[i].pause();
+                }
+                playing=false;
+            };
+            this.play = function ()
+            {
+                for(var i in this.editors)
+                {
+                    this.editors[i].play();
+                }
+                playing=true;
+            };
+            this.loadFromSave = function (save)
+            {
+                save = save.substring(save.search(" ") + 1, save.length);
+                var jsonData = JSON.parse(save);
+                this.load(jsonData);
+            };
+            this.drawPreview = function ()
+            {
+
+            };
+            this.getOver = function ()
+            {
+                return ended;
+            };
+            this.getProgress = function ()
+            {
+            	//console.log("Get progress.");
+            	var leastProgress=0,
+            		leastProgressDefined=false;
+            	for(var i in this.editors)
+            	{
+            	    if(this.editors[i].getProgress() > leastProgress || !leastProgressDefined)
+            	    {
+            	        leastProgress=this.editors[i].getProgress();
+            	        leastProgressDefined=true;
+            	    }
+            	}
+                return leastProgress;//(this.element.duration/this.element.currentTime);
+            };
+            this.getRealProgress = function ()
+            {
+                return this.getProgress();
+            };
+            this.goToLocation = function (percentage)
+            {
+                try{
+                    for(var i in this.editors)
+                    {
+                        this.editors[i].goToLocation(percentage);
+                    }
+                }
+                catch(e)
+                {
+                    console.warn(e);
+                }
+            };
+            this.startSection = function ()
+            {
+            	console.log("Empezamos un parte.");
+            	playing=true;
+                ended=false;
+                for(var i in this.editors)
+                {
+                    this.editors[i].play();
+                    this.editors[i].startSection();
+                }
+            };
+            this.drawSection = function (ctx)
+            {
+                var numberEnded=0;
+                for(var i in this.editors)
+                {
+                    if(!this.editors[i].drawSection(ctx))
+                    {
+                        numberEnded++;
+                    }
+                }
+                if(numberEnded >= this.editors.length)
+                {
+                    ended=true;
+                }
+                return this.getOver();
+            };
+	    
+	    addTo.appendChild(this.element);
+	    this.element.appendChild(this.content);
+	    this.content.appendChild(this.mainRow);
+	}
+
+
+        function Cube3D(addTo)
+        {
+            this.gl = WebGLHelper.getContext();
+
+            this.element = document.createElement("canvas");
+            this.element.width = 100;
+            this.element.height = 65;
+            this.ctx = this.element.getContext("2d");
+
+            this.backgroundElement = document.createElement("canvas");
+            this.backgroundElement.width = 300;
+            this.backgroundElement.height = 300;
+            this.backgroundCtx = this.backgroundElement.getContext("2d");
+
+
+            this.editorZone = document.createElement("div");
+            this.editors=[];
+            
+            this.createEditor=function(loadData)
+            {
+                var container=document.createElement("p"),
+                    controls=document.createElement("div"),
+                    scenes=document.createElement("div"),
+                    title=document.createElement("h2"),
+                    playbackArea=document.createElement("div");
+                title.innerHTML="[Su título estará aquí.]";
+                title.contentEditable=true;
+                title.style.border="1px solid black";
+                title.style.backgroundColor="white";
+                title.style.padding="10px";
+                container.style.margin="0px";
+                container.style.border="1px solid black";
+                var editor=new MovieMaker(controls, scenes, title, playbackArea);
+                this.editors.push(editor);
+                editor.loadControls();
+                if(loadData)
+                {
+                    editor.load(loadData);
+                }
+                this.editorZone.appendChild(container);
+                container.appendChild(title);
+                container.appendChild(controls);
+                container.appendChild(scenes);
+                container.appendChild(playbackArea);
+            };
+
+            this.createEditor();
+
+            if(addTo)
+            {
+                addTo.appendChild(this.element);
+                addTo.appendChild(this.editorZone);
+            }
+            this.changable = {};
+            this.changable.backgroundColor = "0.0, 0.0, 1.0, 1.0";
+
+            this.changable.duration = 100;
+            this.changable.frameLength = 10;
+            this.currentTime = 0;
+
+            this.changable.x = 0;
+            this.changable.y = 0;
+            this.changable.z = 0;
+            
+            this.changable.rx = 0;
+            this.changable.ry = 0;
+            this.changable.rz = 0;
+            
+            this.changable.w = 1;
+            this.changable.h = 1;
+            this.changable.d = 1;
+
+            this.changable.dx = 0;
+            this.changable.dy = 0;
+            this.changable.dz = 0;
+
+            this.changable.drx = 0;
+            this.changable.dry = 0;
+            this.changable.drz = 0;
+
+            this.changable.dw = 0;
+            this.changable.dh = 0;
+            this.changable.dd = 0;
+            
+            this.changable.centerX = 0;
+            this.changable.centerY = 0;
+            this.changable.centerZ = 0;
+            
+            this.changable.countX = 1;
+            this.changable.countZ = 1;
+            this.changable.yEquation = "y=0.5*x-0.7*z*cos(t)";
+
+            this.over = false;
+
+            this.changable.clearEachTime = true;
+
+            this.paused = true;
+
+            this.lastTime = (new Date()).getTime();
+
+            var me = this;
+            this.save = function()
+            {
+                var editorSave = {};
+            	for(var i in me.editors)
+            	{
+            		editorSave[i]=me.editors[i].save(true);
+            	}
+
+                return "caja " + JSON.stringify({ "duration": me.changable.duration, 
+                "frameLength": me.changable.frameLength,
+                "x": me.changable.x,
+                "y": me.changable.y,
+                "z": me.changable.z,
+                "w": me.changable.w,
+                "h": me.changable.h,
+                "d": me.changable.d,
+                "dw": me.changable.dw,
+                "dh": me.changable.dh,
+                "dd": me.changable.dd,
+                "dx": me.changable.dx,
+                "dy": me.changable.dy,
+                "dz": me.changable.dz,
+                "drx": me.changable.drx,
+                "dry": me.changable.dry,
+                "drz": me.changable.drz,
+                "centerX": me.changable.centerX,
+                "centerY": me.changable.centerY,
+                "centerZ": me.changable.centerZ,
+                "countX": me.changable.countX,
+                "countZ": me.changable.countZ,
+                "yEquation": me.changable.yEquation,
+                "clearEachTime": me.changable.clearEachTime,
+                "editorSave": JSON.stringify(editorSave),
+                "backgroundColor": me.changable.backgroundColor  });
+            };
+
+            this.load = function(jsonData)
+            {
+                for(var i in jsonData)
+                {
+                    if(i !== "gl" && i !== "element" && i !== "paused" && i !== "__proto__" && i !== "editorSave")
+                    {
+                        me.changable[i] = jsonData[i];
+                    }
+                    else if(i === "editorSave")
+                    {
+                        me.editors = [];
+                        me.editorZone.innerHTML = "";
+                        var data = JSON.parse(jsonData[i]);
+
+                        for(var j in data)
+                        {
+                            me.createEditor(data[j]);
+                        }
+                    }
+                }
+            };
+
+            this.reload = function(addTo)
+            {
+                var save = me.save();
+                me.element = document.createElement("canvas");
+                me.element.width = 100;
+                me.element.height = 65;
+                me.editorZone = document.createElement("div");
+
+                if(addTo)
+                {
+                    addTo.appendChild(me.element);
+                    addTo.appendChild(me.editorZone);
+                }
+
+                me.ctx = me.element.getContext("2d");
+
+                me.loadFromSave(save);
+            };
+
+            this.pause = function()
+            {
+                me.paused = true;
+
+                for(var i in me.editors)
+                {
+                    me.editors[i].pause();
+                }
+            };
+
+            this.play = function()
+            {
+                me.paused = false;
+
+                for(var i in me.editors)
+                {
+                    me.editors[i].play();
+                }
+
+                me.lastTime = (new Date()).getTime();
+            };
+
+            this.loadFromSave = function(save)
+            {
+                save = save.substring(save.search(" ") + 1, save.length);
+
+                var jsonData = JSON.parse(save);
+
+                this.load(jsonData);
+            };
+
+            this.drawPreview = function()
+            {
+                me.storeCurrentVariables();
+                me.drawFrame(me.ctx);
+            };
+
+            this.getOver = function()
+            {
+                if(me.changable.duration > 0)
+                {
+                    return me.currentTime >= me.changable.duration && !me.paused;
+                }
+                else
+                {
+                    return me.over && !me.paused;
+                }
+            };
+
+            this.getProgress = function()
+            {
+                if(me.changable.duration > 0)
+                {
+                    return me.currentTime / me.changable.duration;
+                }
+                else
+                {
+                    var leastProgress=0,
+            		leastProgressDefined=false;
+                    for(var i in me.editors)
+                    {
+                        if(me.editors[i].getProgress() > leastProgress || !leastProgressDefined)
+                        {
+                            leastProgress=me.editors[i].getProgress();
+                            leastProgressDefined=true;
+                        }
+                    }
+
+                    //console.log(leastProgress);
+
+                    return leastProgress;
+                }
+            };
+
+            this.getRealProgress = this.getProgress;
+
+            this.goToLocation = function(percentage)
+            {
+                if(me.changable.duration > 0)
+                {
+                    me.currentTime = me.changable.duration * percentage;
+                }
+                
+                try
+                {
+                    for(var i in me.editors)
+                    {
+                        me.editors[i].goToLocation(percentage);
+                    }
+                }
+                catch(e)
+                {
+                    console.warn(e);
+                }
+            };
+
+            this.storeCurrentVariables = function()
+            {
+                me.currentX = me.changable.x*1;
+                me.currentY = me.changable.y*1;
+                me.currentZ = me.changable.z*1;
+
+                me.currentRX = me.changable.rx*1;
+                me.currentRY = me.changable.ry*1;
+                me.currentRZ = me.changable.rz*1;
+
+                me.currentW = me.changable.w*1;
+                me.currentH = me.changable.h*1;
+                me.currentD = me.changable.d*1;
+            };
+
+            this.startSection = function()
+            {
+                me.currentTime = 0;
+                me.over = false;
+
+                for(var i in me.editors)
+                {
+                    me.editors[i].startSection();
+                }
+                me.play();
+
+                me.storeCurrentVariables();
+            };
+
+            this.drawFrame = function(ctx)
+            {
+                WebGLHelper.resizeTo(ctx.canvas.width, ctx.canvas.height);
+                WebGLHelper.setClearColorString(me.changable.backgroundColor);
+
+                if(me.changable.clearEachTime)
+                {
+                    WebGLHelper.clear();
+                }
+
+                WebGLHelper.resetCameraMatrix();
+
+                WebGLHelper.worldMatrix.save();
+                //console.log(WebGLHelper.worldMatrix.toString());
+
+                WebGLHelper.worldMatrix.translate(me.currentX, me.currentY, me.currentZ, true);
+                WebGLHelper.worldMatrix.scale(me.currentW, me.currentH, me.currentD, true);
+                WebGLHelper.worldMatrix.rotateX(me.currentRX, true);
+                WebGLHelper.worldMatrix.rotateY(me.currentRY, true);
+                WebGLHelper.worldMatrix.rotateZ(me.currentRZ, true);
+                
+                var yEquationHasT = me.changable.yEquation.search("t") > 0;
+                var z, y = 0;
+                var t = me.currentTime / 100;
+                var sin = Math.sin, cos = Math.cos, tan = Math.tan, atan = Math.atan,
+                    pow = Math.pow, sqrt = Math.sqrt, ln = Math.log;
+                
+                for(var x = 0; x < me.changable.countX; x++)
+                {
+                    for(z = 0; z < me.changable.countZ; z++)
+                    {
+                        if(x > 0 || z > 0 || yEquationHasT)
+                        {
+                            try
+                            {
+                                y = eval(me.changable.yEquation);
+                            }
+                            catch(e)
+                            {
+                                worldMatrix.restore();
+                                return;
+                            }
+                        }
+                        
+                        WebGLHelper.worldMatrix.save();
+                        WebGLHelper.worldMatrix.translate(x - me.changable.centerX*1, y - me.changable.centerY*1, z - me.changable.centerZ*1, true);
+                        WebGLHelper.updateMatricies(false, true, true);
+                        WebGLHelper.renderObject();
+                        WebGLHelper.worldMatrix.restore();
+                    }
+                }
+
+                WebGLHelper.worldMatrix.restore();
+
+                ctx.drawImage(WebGLHelper.gl.canvas, 0, 0);
+            };
+
+            this.drawSection = function(ctx)
+            {
+                var nowTime = (new Date()).getTime();
+
+                if(nowTime > me.lastTime + me.changable.frameLength*1 && !me.paused)
+                {
+                    var endedCount = 0;
+                    for(var i in me.editors)
+                    {
+                        if(!me.editors[i].drawSection(me.backgroundCtx))
+                        {
+                            endedCount++;
+                        }
+                    }
+
+                    if(endedCount >= me.editors.length)
+                    {
+                        me.over = true;
+                    }
+                    
+                    WebGLHelper.imageToTexture(me.backgroundCtx.canvas);
+
+                    me.drawFrame(ctx);
+
+                    var dt = (nowTime - me.lastTime);
+
+                    if(me.changable.frameLength)
+                    {
+                        dt /= me.changable.frameLength;
+
+                        me.currentTime += dt;
+                    }
+                    else
+                    {
+                        me.currentTime ++;
+                    }
+
+                    me.currentX = me.changable.x*1 + me.changable.dx * me.currentTime;
+                    me.currentY = me.changable.y*1 + me.changable.dy * me.currentTime;
+                    me.currentZ = me.changable.z*1 + me.changable.dz * me.currentTime;
+
+                    me.currentRX = me.changable.rx*1 + me.changable.drx * me.currentTime;
+                    me.currentRY = me.changable.ry*1 + me.changable.dry * me.currentTime;
+                    me.currentRZ = me.changable.rz*1 + me.changable.drz * me.currentTime;
+
+                    me.currentW = me.changable.w*1 + me.changable.dw * me.currentTime;
+                    me.currentH = me.changable.h*1 + me.changable.dh * me.currentTime;
+                    me.currentD = me.changable.d*1 + me.changable.dd * me.currentTime;
+
+                    me.lastTime = nowTime;
+                }
+
+                return me.getOver();
+            };
+        }
+
+        function Sound(src, addTo)
+        {
+            this.element = new Audio();
+            this.element.src = src;
+            this.src = src;
+            this.overlapsNext = false;
+            this.element.pause();
+            this.element.setAttribute("controls", "");
+            this.element.src=src;
+            if(this.element.load){ this.element.load(); }
+            addTo.appendChild(this.element);
+            this.wait = 0.0;
+            this.end = 0;
+            
+            var me = this;
+            this.load = function (src, wait, end, rate, volume)
+            {
+                console.log("Rate: " + rate);
+                this.wait = wait || 0;
+                this.end = end || 0;
+                this.src = src;
+                this.element.src=src;
+
+                //if(this.element.load){ this.element.load(); }
+
+                this.element.playbackRate = rate !== undefined ? rate : 1;
+                this.playbackRate = rate !== undefined ? rate : 1;
+                this.element.volume = volume !== undefined ? volume : 1;
+            };
+
+
+            this.save = function ()
+            {
+                return "sound " + JSON.stringify({ "src": this.src, "wait": this.wait, "end": this.end, "rate": this.element.playbackRate, "volume": this.element.volume });
+            };
+            this.pause = function ()
+            {
+                this.element.pause();
+            };
+            this.play = function ()
+            {
+                this.element.play();
+            };
+            this.loadFromSave = function (save)
+            {
+                save = save.substring(save.search(" ") + 1, save.length);
+                var jsonData = JSON.parse(save);
+                this.load(jsonData["src"], jsonData["wait"], jsonData["end"], jsonData["rate"], jsonData["volume"]);
+            };
+            this.reload = function (addTo)
+            {
+                addTo.appendChild(this.element);
+            };
+            this.drawPreview = function ()
+            {
+            };
+            this.getOver = function ()
+            {
+                return this.element.ended || this.element.currentTime >= this.element.duration - this.end;// || this.element.duration == 0;
+            };
+            this.getProgress = function ()
+            {
+                if(this.element.duration > 0)
+                {
+                    //console.log(this.element.currentTime/this.element.duration);
+                    return 0.5;
+                }
+                else
+                {
+                    return 0.5;
+                }
+            };
+            this.getRealProgress = function ()
+            {
+                return (this.element.currentTime - this.wait)/(this.element.duration - this.end - this.wait);
+            };
+            this.goToLocation = function (percentage)
+            {
+                try
+                {
+                    this.element.currentTime = percentage * (this.element.duration - this.end) + this.wait;
+                }
+                catch(e)
+                {
+                    console.warn(e);
+                }
+            };
+            this.startSection = function ()
+            {
+                console.log("START SOUND! " + this.getOver());
+                this.element.currentTime=this.wait;
+                this.element.ended = false;
+                this.element.play();
+            };
+            this.endSection = function()
+            {
+                this.element.pause();
+            };
+            this.drawSection = function (ctx)
+            {
+                return this.getOver();
+            };
+        }
+        function TalkObject(text, addTo)
+        {
+            this.element = document.createElement("button");
+            this.element.innerHTML = "Oiga";
+            this.text = text||"nada";
+            this.utterance = new SpeechSynthesisUtterance(this.text);
+            var me = this;
+            this.load = function (text, speed, pitch, voice)
+            {
+                this.text = text;
+                this.utterance = new SpeechSynthesisUtterance(this.text);
+                if(speed)
+                {
+                    this.utterance.rate = speed;
+                    this.speed = speed;
+                }
+                if (voice)
+                {
+                    this.utterance.voice = speechSynthesis.getVoices()[voice];
+                    this.voice = voice;
+                }
+                if (pitch)
+                {
+                    this.utterance.pitch = pitch;
+                    this.pitch = pitch;
+                }
+            };
+            this.save = function ()
+            {
+                return "talk " + JSON.stringify({"text": this.text, "speed":this.rate, "pitch": this.pitch, "voice":this.voice});
+            };
+            this.pause = function ()
+            {
+                speechSynthesis.pause();
+            };
+            this.play = function ()
+            {
+                speechSynthesis.resume();
+            };
+            this.loadFromSave = function (save)
+            {
+                save = save.substring(save.search(" ") + 1, save.length);
+                var jsonData = JSON.parse(save);
+                this.load(jsonData["text"], jsonData["speed"], jsonData["pitch"], jsonData["voice"]);
+            };
+            this.reload = function (addTo)
+            {
+                this.element = document.createElement("button");
+                this.element.innerHTML = "Oiga";
+                var me = this;
+                this.element.onclick = function () { speechSynthesis.cancel(); speechSynthesis.speak(me.utterance); };
+                if (addTo)
+                {
+                    addTo.appendChild(this.element);
+                }
+            };
+            this.drawPreview = function ()
+            {
+                
+            };
+            this.getOver = function ()
+            {
+                return !speechSynthesis.speaking;
+            };
+            this.getProgress = function ()
+            {
+                return 1;
+            };
+            this.goToLocation = function (percentage)
+            {
+                speechSynthesis.cancel();
+            };
+            this.startSection = function ()
+            {
+                speechSynthesis.cancel();
+                speechSynthesis.speak(this.utterance);
+            };
+            this.drawSection = function (ctx)
+            {
+                return true;
+            };
+            this.element.onclick = function () { me.startSection(); };
+            if (addTo)
+            {
+                addTo.appendChild(this.element);
+            }
+        }
+
+        function StopMotion(data, addTo, fps, w, h)
+        {
+            this.element = document.createElement("canvas");
+            this.element.width = w||100;
+            this.element.height = h || 100;
+            this.element.style.border = "1px solid green";
+            if (addTo)
+            {
+                addTo.appendChild(this.element);
+            }
+            this.ctx = this.element.getContext("2d");
+            this.pictures = [];
+            this.done = true;
+            this.currentPicture = 0;
+            this.lastTime = (new Date()).getTime();
+            this.fps = fps || 10;
+            this.error = undefined;
+            this.paused = false;
+            this.saveData=data || "";
+
+            var me = this;
+            this.load = function (data)
+            {
+                var srcArray = data.split(",data");
+                var img;
+                this.saveData=data;
+                for(var i=0; i<srcArray.length; i++)
+                {
+                    img = new Image();
+                    img.src = (i!==0?"data":"")+srcArray[i];
+                    //console.log(srcArray[i].substring(0, 100));
+                    this.pictures.push(img);
+                }
+            };
+            this.save = function ()
+            {
+                this.saveData = "";
+
+                for(var i = 0; i < me.pictures.length; i++)
+                {
+                    this.saveData += me.pictures[i].src + ",";
+                }
+
+                return "stopM " + JSON.stringify({ "data": this.saveData, "fps": this.fps });
+
+            };
+            this.loadFromSave = function (save)
+            {
+                save = save.substring(save.search(" ") + 1, save.length);
+                var jsonData = JSON.parse(save);
+                this.fps = jsonData["fps"] * 1;
+                this.load(jsonData["data"]);
+            };
+            this.reload = function (addTo)
+            {
+
+                this.element = document.createElement("canvas");
+                this.element.width = w || 100;
+                this.element.height = h || 100;
+                this.element.style.border = "1px solid green";
+                if (addTo)
+                {
+                    addTo.appendChild(this.element);
+                }
+                this.ctx = this.element.getContext("2d");
+            };
+            this.drawPreview = function ()
+            {
+                var drew = false;
+                var i = 0;
+                while (!drew && this.pictures.length > 0)
+                {
+                    try
+                    {
+                        //this.pictures[i].crossOrigin = "Anonymous";
+                        this.ctx.drawImage(this.pictures[i], 0, 0, this.ctx.canvas.width, this.pictures[i].height * (this.ctx.canvas.width / this.pictures[i].width));
+                        drew = true;
+                    }
+                    catch (e)
+                    {
+
+                    }
+                    i++;
+                    if(i>this.pictures.length && this.pictures.length > 0)
+                    {
+                        this.pictures[0].onload = this.drawPreview;
+                        break;
+
+                    }
+                }
+            };
+            this.getOver = function ()
+            {
+                return this.done;
+            };
+            this.pause = function ()
+            {
+                this.paused = true;
+            };
+            this.getProgress = function ()
+            {
+                return Math.min(0.95, this.currentPicture/(this.pictures.length-1));
+            };
+            this.play = function ()
+            {
+                this.paused = false;
+            };
+            this.goToLocation = function (percentage)
+            {
+                this.currentPicture = Math.floor(percentage*(this.pictures.length-1));
+            };
+            this.startSection = function ()
+            {
+                this.currentPicture = 0;
+            };
+            this.drawSection = function (ctx)
+            {
+                var nowTime=(new Date()).getTime();
+                if((nowTime - this.lastTime) * this.fps / 1000 >= 1)
+                {
+                    try
+                    {
+                        if (this.currentPicture < this.pictures.length)
+                        {
+                            if (ctx.canvas.width <= ctx.canvas.height)
+                            {
+                                this.pictures[this.currentPicture].crossOrigin = "Anonymous";
+                                ctx.drawImage(this.pictures[this.currentPicture], 0, 0, ctx.canvas.width, this.pictures[0].height * (ctx.canvas.width / this.pictures[0].width));
+                            }
+                            else
+                            {
+                                ctx.drawImage(this.pictures[this.currentPicture], 0, 0, this.pictures[0].width * (ctx.canvas.height / this.pictures[0].height), ctx.canvas.height);
+
+                            }
+                        }
+                        this.error = undefined;
+                    }
+                    catch(e)
+                    {
+                        this.error = e;
+                    }
+                    if (!this.paused)
+                    {
+                        this.currentPicture ++;
+                    }
+                    if (this.currentPicture >= this.pictures.length)
+                    {
+                        this.done = true;
+                        return this.done;
+                    }
+                    else
+                    {
+                        this.done = false;
+                    }
+                    this.lastTime = nowTime;
+                }
+                return this.getOver();
+            };
+
+            this.edit = function()
+            {
+                var editor;
+                var editWindow = SubWindowHelper.create({ title: "Editelo", width: "70%", height: "70%",
+                    "onClose": function()
+                    {
+                        editor.quit();
+                        
+                        try
+                        {
+                            me.drawPreview();
+                        }
+                        catch(e)
+                        {
+                            console.warn(e);
+                        }
+                    }
+                });
+                var contentArea = editWindow.getContent();
+
+                editor = new StopMotionEditor(contentArea, me.pictures);
+                editor.load();
+            };
+        }
+        function AddedScene(index, movieMaker, elementHelper)
+        {
+            this.index = index;
+            this.movieMaker = movieMaker;
+            this.elementHelper = elementHelper;
+
+            this.object;
+            this.objects = [];
+            var me = this;
+            this.addObject = function (obj)
+            {
+                this.object = obj;
+            };
+            this.loadBasicControls = function ()
+            {
+                me.element = document.createElement("span");
+                me.element.innerHTML = "PARTE: "+me.index+"</br>";
+                me.element.style.margin = "2px";
+                me.element.style.border = "2px solid black";
+                me.element.style.display = "block";
+                me.element.style.backgroundColor = JavaScriptHelper.getColorBasedOnTime(10 * Math.random(), 1000000, 2000000, 1001000, 1);
+                me.element.style.backgroundImage="radial-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.4))";
+                me.element.style.backgroundSize = "5px 5px";
+                me.element.style.boxShadow="0px 0px 20px rgba(0,100,0,0.5)";
+                me.element.style.borderRadius="10px";
+                me.element.style.padding="10px";
+                me.element.style.overflowX="auto";
+                me.deleteButton = document.createElement("button");
+                me.deleteButton.innerHTML = "-";
+                me.deleteButton.onclick = me.delete;
+                me.element.appendChild(me.deleteButton);
+                me.moveLeftButton = document.createElement("button");
+                me.moveLeftButton.innerHTML = "&lt;";
+                me.moveLeftButton.onclick = me.moveLeft;
+                me.element.appendChild(me.moveLeftButton);
+                me.copyButton = document.createElement("button");
+                me.copyButton.innerHTML = "Copie";
+                me.copyButton.onclick = me.copy;
+                me.element.appendChild(me.copyButton);
+
+                me.previewArea = document.createElement("div");
+                me.element.appendChild(me.previewArea);
+
+                ////alert("Added buttons. OBJECTS: "+me.objects.length);
+                var oldLen=me.objects.length*1;
+                for (var index = 0; index < oldLen; index++)
+                {
+                    if (me.objects[index][0] == "slider")
+                    {
+                        me.addSlider(me.objects[index][1], me.objects[index][2], me.objects[index][3], me.objects[index][4], index, me.objects[index][5]);
+                        ////alert("ADDED SLIDER! "+index + " len "+me.objects.length);
+                    }
+                    else if (me.objects[index][0] == "input")
+                    {
+                        me.addInput(me.objects[index][1], me.objects[index][2], me.objects[index][3], index, me.objects[index][4]);
+                    }
+                    else if (me.objects[index][0] == "select")
+                    {
+                        me.addSelect(me.objects[index][1], me.objects[index][2], me.objects[index][3], index, me.objects[index][4]);
+                    }
+                    else if (me.objects[index][0] == "button")
+                    {
+                        me.addButton(me.objects[index][1], index, me.objects[index][2]);
+                    }
+
+                    if(index >= me.objects.length)
+                    {
+                        break;
+                    }
+                }
+                ////alert("added other things");
+            };
+
+            this.load = function (addTo, reload)
+            {
+                me.loadBasicControls();
+                if (reload)
+                {
+                    console.log(me.object.reload);
+                    me.object.reload(me.previewArea || me.element);
+                }
+                ////alert("Loaded basic controls.")
+                //Todo
+                //console.log(me.element);
+                if (!addTo)
+                {
+                    me.elementHelper.addItem(me);
+                }
+                else
+                {
+                    addTo.appendChild(me.element);
+                }
+                if (me.object && me.object.drawPreview)
+                {
+                    me.object.drawPreview();
+                }
+            };
+            this.addSlider = function (name, doneFunction, min, max, record, value)
+            {
+                var container = document.createElement("div");
+                var slider = document.createElement("input");
+                var label = document.createElement("span");
+                slider.type = "range";
+                slider.title = name;
+                var oldLength = record ===undefined || record === true?me.objects.length * 1:record;
+                slider.onchange = function () { doneFunction(slider.value); me.objects[oldLength][me.objects[oldLength].length-1] = slider.value; };
+                slider.onclick = slider.onchange;
+                slider.onmouseup = slider.onchange;
+                slider.oninput = slider.onchange;
+                slider.min = min || 0;
+                slider.max = max || 100;
+                slider.step = 0.1;
+                slider.style.width = "50%";
+                slider.value = value||0;
+                label.innerHTML = name;
+                container.appendChild(label);
+                container.appendChild(slider);
+                me.element.appendChild(container);
+                if (record === true || record === undefined)
+                {
+                    me.objects.push(["slider", name, doneFunction, min, max, slider.value]);
+                }
+            };
+
+            this.addButton = function (labelText, record, onClick)
+            {
+                var button = document.createElement("button");
+                button.innerHTML = labelText;
+
+                button.onclick = onClick;
+
+                me.element.appendChild(button);
+
+                if(record === true || record === undefined)
+                {
+                    me.objects.push(["button", labelText, onClick]);
+                }
+            };
+
+            this.addSelect = function (labelText, options, doneFunction, record, value)
+            {
+                var inputArea = document.createElement("div");
+                var label = document.createElement("span");
+                label.innerHTML = labelText + " ";
+
+                var select = document.createElement("select");                
+
+                var handleOption = function(key)
+                {
+                    var optionElement = document.createElement("option");
+                    optionElement.value = key;
+                    optionElement.innerHTML = options[key];
+
+                    select.appendChild(optionElement);
+                };
+
+                for(var i in options)
+                {
+                    handleOption(i);
+                }
+
+                var oldLength = record === undefined || record === true ? me.objects.length * 1 : record;
+                select.onchange = function () { doneFunction(select.value, select); me.objects[oldLength][3] = select.value; };
+                select.oninput = select.onchange;
+
+                select.value = value !== undefined ? value : "";
+
+                inputArea.appendChild(label);
+                inputArea.appendChild(select);
+                me.element.appendChild(inputArea);
+                if (record === true || record === undefined)
+                {
+                    me.objects.push(["select", labelText, options, doneFunction, select.value]);
+                }
+            };
+
+            this.addInput = function (placeHolder, type, doneFunction, record, value)
+            {
+                var inputArea = document.createElement("div");
+                var lable = document.createElement("span");
+                lable.innerHTML = placeHolder + " ";
+                var input = document.createElement(type !== "textarea" ? "input" : type);
+                
+                inputArea.appendChild(lable);
+                inputArea.appendChild(input);
+                
+                
+                if (type === "color")
+                {
+                    input.type = "hidden";
+                    
+                    var changeColorInput = document.createElement("button");
+                    changeColorInput.innerHTML = "Cambie el Color";
+                    
+                    changeColorInput.style.backgroundColor = value;
+                    
+                    changeColorInput.onclick = function()
+                    {
+                        var inputRGBA = HTMLHelper.colorStringToArray(input.value);
+                    
+                        SubWindowHelper.promptForColor("Cambie el Color", "Seleccione su color.", inputRGBA, function(red, green, blue, alpha)
+                        {
+                            input.value = "rgba(" + red + ", " + green + ", " + blue + ", " + alpha + ")";
+                            changeColorInput.style.backgroundColor = input.value;
+                            
+                            doneFunction(input.value, input); 
+                            me.objects[oldLength][4] = input.value;
+                        });
+                    };
+                    
+                    inputArea.appendChild(changeColorInput);
+                }
+                else if (type === "textarea")
+                {
+                    input.style.width = "500px";
+                    input.style.height = "300px";
+                    input.width = 500;
+                    input.height = 300;
+                }
+                else
+                {
+                    input.type = type;
+                }
+                
+                input.placeHolder = placeHolder;
+                var oldLength = record === undefined || record === true ? me.objects.length * 1 : record;
+                input.onchange = function () { doneFunction(input.value, input); me.objects[oldLength][4] = input.value; };
+                input.oninput = input.onchange;
+                input.onclick = input.onchange;
+                input.onkeyup = input.onchange;
+                input.value = value !== undefined ? value : "";
+                
+                if(input.type === 'checkbox')
+                {
+                    input.checked=value === '1' || value === true;
+                }
+                
+                me.element.appendChild(inputArea);
+                if (record === true || record === undefined)
+                {
+                    me.objects.push(["input", placeHolder, type, doneFunction, input.value]);
+                }
+            };
+            this.delete = function ()
+            {
+                me.movieMaker.scenes.splice(me.index, 1);
+                me.elementHelper.items.splice(me.index, 1);
+                me.element.style.padding = "0px";
+                me.element.parentElement.removeChild(me.element);
+
+                for(var i = me.index; i < me.elementHelper.items.length; i++)
+                {
+                    me.elementHelper.items[i].item.index = i;
+                }
+            };
+            this.moveLeft = function ()
+            {
+                var parentElement = me.element.parentElement;
+                if (me.index - 1 >= 0)
+                {
+                    ////alert("MOVING LEFT!");
+                    var oldIndex = me.index * 1;
+                    //alert(me.index);
+                    me.movieMaker.scenes.splice(me.index, 1);
+                    me.element.innerHTML = "";
+                    me.elementHelper.items[me.index - 1].innerHTML = "";
+                    var other = me.elementHelper.swapItems(me.index, me.index - 1);
+                    //alert(me.index+" "+other.item.index);
+                    me.movieMaker.scenes.splice(oldIndex-1, 0, me.object);
+                    if (me.index >= oldIndex)
+                    {
+                        //alert("!");
+                        me.index -= 1;
+                        other.index = oldIndex;
+                    }
+
+                    //me.index -= 1;
+                    //alert("MovedLeft");
+                    //console.log(me.element);
+                    //me.load(me.element);
+                }
+            };
+            this.copy = function()
+            {
+                window.copiedObject=me.object.save(true);
+            };
+            me.load();
+        }
+
+        function AddedScenesAreaHandler(element)
+        {
+            this.items = [];
+            this.element = element;
+            var me = this;
+
+            this.addItem = function (item, addTo, addIndex)
+            {
+                if (!addTo)
+                {
+                    addTo = me.element;
+                }
+                var container = document.createElement("span");
+                var before = document.createElement("span");
+                var after = document.createElement("span");
+                var innerContainer = document.createElement("span");
+                container.appendChild(before);
+                innerContainer.appendChild(item.element)
+                container.appendChild(innerContainer);
+                container.appendChild(after);
+                addTo.appendChild(container);
+                if (!addIndex)
+                {
+                    this.items.push({ "before": before, "element": item.element, "item": item, "after": after, "container": container });
+                }
+                else
+                {
+                    this.items[addIndex]=({ "before": before, "element": item.element, "item": item, "after": after, "container": container });
+                }
+                return this.items.length - 1;
+            };
+            this.swapItems = function (from, to)
+            {
+                //alert("Moving from "+from+" to "+to+".")
+                while(!this.items[from] && from >= 0)
+                {
+                    from--;
+                    console.log("From: " + from);
+                }
+
+                this.items[from].element.outerHTML = "";
+
+                console.log(this.items[from]);
+                console.log(this.items[to]);
+                var oldItem = this.items[from];
+                //oldItem.element = myContainer;
+                this.items[from]=this.items[to];
+                this.items[to] = oldItem;
+                this.items[to].container.innerHTML = "";
+                this.items[from].container.innerHTML = "";
+                var oldToContainer = this.items[to].container;
+                this.items[to].container = this.items[from].container;
+                this.items[from].container = oldToContainer;
+                this.items[to].item.index = to;
+                this.items[from].item.index = from;
+                this.items[from].item.load(this.items[from].container, true);
+                this.items[to].item.load(this.items[to].container, true);
+                console.log("Re-loaded!");
+                console.log("Swapped!");
+
+                return this.items[to];
+            };
+        }
+        function MovieMaker(controlArea, sceneArea, titleZone, playbackArea)
+        {
+            //Load, save, loadfromSave
+            this.controlArea = controlArea || document.getElementById("controls");
+            this.addedScenes = sceneArea || document.getElementById("addedScenes");
+            this.addedScenesHelper = new AddedScenesAreaHandler(this.addedScenes);
+            this.titleZone = titleZone || document.getElementById("title");
+            this.playbackArea = playbackArea || document.getElementById("playbackElement");
+            this.playbackArea.style.display = "none";
+            this.playbackArea.style.position = "fixed";
+            this.playbackArea.style.zIndex = 220;
+            this.playbackArea.style.top = 0;
+            this.playbackArea.style.left = 0;
+            this.playbackArea.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+
+            this.hidePlayback = document.createElement("button");
+            this.hidePlayback.innerHTML = "Cierre";
+            this.hidePlayback.style.backgroundColor = "rgba(255, 100, 0, 0.8)";
+            this.hidePlayback.style.color = "lightblue";
+            this.playbackArea.appendChild(this.hidePlayback);
+
+            this.progress = document.createElement("input");
+            this.progress.type = "range";
+            this.playbackArea.appendChild(this.progress);
+
+            this.playpause = document.createElement("button");
+            this.playpause.innerHTML = "Mire";
+            this.playbackArea.appendChild(this.playpause);
+
+            this.playbackCanvas = document.createElement("canvas");
+            this.playbackCanvas.width = window.innerWidth - 10;
+            this.playbackCanvas.height = window.innerHeight - 20;
+            this.playbackCanvas.style.backgroundImage = "radial-gradient(rgba(255, 255, 255, 0.8), rgba(200, 200, 200, 1.0))";
+            this.playbackArea.appendChild(this.playbackCanvas);
+            this.playbackCtx = this.playbackCanvas.getContext("2d");
+            
+            this.scenes = [];
+            this.currentScene = 0;
+            this.playing = true;
+            //this.playbackArea
+            var me = this;
+            this.hidePlayback.onclick = function () { me.playbackArea.style.display = "none"; };
+            this.loadControls = function ()
+            {
+                me.controlArea.setAttribute("class", "mainControlZone");
+                
+                var addVideoButton = document.createElement("button");
+                addVideoButton.innerHTML = "Añada un video.";
+                addVideoButton.onclick = me.addVideo;
+                addVideoButton.style.backgroundColor = "rgba(255, 100, 100, 0.5)";
+
+                var addStopMotionButton = document.createElement("button");
+                addStopMotionButton.innerHTML = "Añada una cosa de &ldquo;Los Partes de Su Video&rdquo;";
+                addStopMotionButton.onclick = me.addStopMotion;
+                addStopMotionButton.style.filter = "contrast(200%)";
+
+                var addSoundButton = document.createElement("button");
+                addSoundButton.innerHTML = "Añada música.";
+                addSoundButton.onclick = me.addSound;
+                addSoundButton.style.filter = "sepia(100%)";
+
+                var addTextButton = document.createElement("button");
+                addTextButton.innerHTML = "Añada texto.";
+                addTextButton.onclick = me.addText;
+                addTextButton.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
+
+                var addTalkerButton = document.createElement("button");
+                addTalkerButton.innerHTML = "Añada una voz virtual.";
+                addTalkerButton.onclick = me.addSpeechSynthesis;
+                addTalkerButton.style.filter = "saturate(800%)";
+
+                var addImageButton = document.createElement("button");
+                addImageButton.innerHTML = "Añada un retrato.";
+                addImageButton.onclick = me.addImage;
+
+                var addSplitButton = document.createElement("button");
+                addSplitButton.innerHTML = "Añada un separador.";
+                addSplitButton.onclick = me.addSplit;
+                addSplitButton.style.backgroundSize = "50% 100%";
+
+                var addCajaButton = document.createElement("button");
+                addCajaButton.innerHTML = "Añada una Caja Virtual";
+                addCajaButton.onclick = me.addCaja;
+                addCajaButton.style.boxShadow = "3px 3px 1px red inset";
+                //addCajaButton.style.transform = "matrix(1, 0.1, 0, 1, 0, 0)";
+
+                var playButton = document.createElement("button");
+                playButton.innerHTML = "Mire";
+                playButton.style.fontSize = "24pt";
+                playButton.style.backgroundColor = "orange";
+                playButton.onclick = me.startPreview;
+
+                var saveButton = document.createElement("button");
+                saveButton.innerHTML = "Guarde";
+                saveButton.onclick = function(){ me.save(); };
+                saveButton.style.backgroundColor = "rgba(100, 255, 100, 0.6)";
+
+                var openButton = document.createElement("button");
+                openButton.innerHTML = "Abra";
+                openButton.onclick = me.loadFromSave;
+                openButton.style.backgroundColor = "#33aaff";
+
+                var pasteButton = document.createElement("button");
+                pasteButton.innerHTML = "Pegue";
+                pasteButton.onclick = me.paste;
+                pasteButton.style.backgroundColor = "yellow";
+
+                var objectsSection = document.createElement("div");
+                var videoCommandsSection = document.createElement("div");
+
+                objectsSection.appendChild(addVideoButton);
+                objectsSection.appendChild(addStopMotionButton);
+                objectsSection.appendChild(addSoundButton);
+                objectsSection.appendChild(addTextButton);
+                objectsSection.appendChild(addSplitButton);
+                objectsSection.appendChild(addCajaButton);
+                if (window.speechSynthesis)
+                {
+                    objectsSection.appendChild(addTalkerButton);
+                }
+                objectsSection.appendChild(addImageButton);
+                videoCommandsSection.appendChild(playButton);
+                videoCommandsSection.appendChild(saveButton);
+                videoCommandsSection.appendChild(openButton);
+                videoCommandsSection.appendChild(pasteButton);
+                
+                var tabNameMap = {};
+                tabNameMap["Mandatos de Los Partes de Su Video"] = objectsSection;
+                tabNameMap["Mandatos de Visto"] = videoCommandsSection;
+                
+                me.tabControl = new TabbedDisplay(tabNameMap, me.controlArea);
+            };
+            this.startPreview = function ()
+            {
+                me.currentScene = 0;
+                me.progress.min = 0;
+
+                me.progress.max = (me.scenes.length) * 100;
+                me.progress.value = 0;
+                me.playbackArea.style.display = "block";
+                me.playbackCanvas.width = window.innerWidth - 10;
+                me.playbackCanvas.height = window.innerHeight - 20;
+                me.playbackCtx = me.playbackCanvas.getContext("2d");
+                if (me.currentScene < me.scenes.length && me.scenes[me.currentScene].startSection)
+                {
+                    me.scenes[me.currentScene].startSection();
+                }
+                me.playOrPause();
+            };
+            
+            this.drawFrame = function ()
+            {
+                if(me.playing)
+                {
+                    if (me.playbackCanvas.width !== window.innerWidth - 10 ||
+                        me.playbackCanvas.height !== window.innerHeight - 20)
+                    {
+                        me.playbackCanvas.width = window.innerWidth - 10;
+                        me.playbackCanvas.height = window.innerHeight - 20;
+                    }
+
+                    if (Math.floor(me.progress.value) != Math.floor(me.currentScene * 100 + me.scenes[me.currentScene].getProgress() * 100))
+                    {
+                        if (me.scenes[me.currentScene].endSection)
+                        {
+                            me.scenes[me.currentScene].endSection();
+                        }
+                        me.currentScene = Math.floor(me.progress.value / 100);
+                        if (me.currentScene >= me.scenes.length)
+                        {
+                            me.currentScene = me.scenes.length - 1;
+                            me.progress.value = Math.floor(me.currentScene * 100 + me.scenes[me.currentScene].getProgress() * 100);
+                        }
+                        if (me.scenes[me.currentScene].startSection)
+                        {
+                            me.scenes[me.currentScene].startSection();
+                        }
+                        me.scenes[me.currentScene].goToLocation(Math.floor(me.progress.value % 100)/100);
+                    }
+                    if (me.scenes[me.currentScene].drawSection(me.playbackCtx))
+                    {
+
+                        if (me.scenes[me.currentScene].endSection)
+                        {
+                            me.scenes[me.currentScene].endSection();
+                        }
+                        me.currentScene++;
+                        if (me.currentScene >= me.scenes.length)
+                        {
+                            me.currentScene = 0;
+                        }
+                        if (me.scenes[me.currentScene].startSection)
+                        {
+                            me.scenes[me.currentScene].startSection();
+                        }
+                    }
+                    me.progress.value = Math.floor(me.currentScene*100 + me.scenes[me.currentScene].getProgress()*100);
+                    requestAnimationFrame(me.drawFrame);
+                }
+            };
+            
+            this.goToLocation=function(location)
+            {
+                me.progress.value=Math.floor(location*100);
+            };
+            
+            this.startSection=function()
+            {
+                me.playing=true;
+                me.currentScene = 0;
+                me.progress.min = 0;
+                ended=false;
+
+                me.progress.max = (me.scenes.length) * 100;
+                me.progress.value = 0;
+                if (me.currentScene < me.scenes.length && me.scenes[me.currentScene].startSection)
+                {
+                    me.scenes[me.currentScene].startSection();
+                }
+                me.play();
+            };
+            
+            var ended=false;
+            
+            this.play=function()
+            {
+                me.playing=false;
+                me.playOrPause();
+            };
+            
+            this.pause=function()
+            {
+                me.playing=true;
+                me.playOrPause();
+            };
+            
+            //TODO: Combine this with the other playback method.
+            this.drawSection=function(ctx)
+            {
+                if(me.playing&&!ended)
+                {
+                    if (me.currentScene < me.scenes.length && me.scenes[me.currentScene].drawSection(ctx))
+                    {
+                        if (me.scenes[me.currentScene].endSection)
+                        {
+                            me.scenes[me.currentScene].endSection();
+                        }
+                        me.currentScene++;
+                        if (me.currentScene >= me.scenes.length)
+                        {
+                            ended=true;
+                            return ended;
+                        }
+                        if (me.scenes[me.currentScene].startSection)
+                        {
+                            me.scenes[me.currentScene].startSection();
+                        }
+                    }
+                    me.progress.value = Math.floor(me.getProgress()*100);
+                }
+                return me.currentScene < me.scenes.length;
+            };
+            
+            this.getProgress=function()
+            {
+            	if(me.currentScene < me.scenes.length)
+            	{
+            		return Math.floor(me.currentScene*100 + me.scenes[me.currentScene].getProgress()*100)/100.0;
+            	}
+            	else
+            	{
+            		return 1;
+            	}
+            };
+            
+            
+            
+            this.playOrPause = function ()
+            {
+            	if(me.currentScene < me.scenes.length)
+            	{
+		        me.playing = !me.playing;
+		        if(me.playing)
+		        {
+		            me.playpause.innerHTML = "Termine.";
+		            me.playpause.onclick = me.playOrPause;
+		            me.scenes[me.currentScene].play();
+		        }
+		        else
+		        {
+		            me.playpause.innerHTML = "Empiece.";
+		            me.playpause.onclick = function ()
+		            {
+		                me.playOrPause();
+		                me.drawFrame();
+
+		            };
+		            me.scenes[me.currentScene].pause();
+		        }
+                }
+            };
+
+            this.paste = function()
+            {
+                if(window.copiedObject)
+                {
+                    me.load(JSON.stringify({"data": [window.copiedObject]}));
+                }
+            };
+
+            this.addVideo = function (save)
+            {
+                function load(name, save, file)
+                {
+                    //alert(name);
+                    var container = new AddedScene(me.scenes.length, me, me.addedScenesHelper);
+                    //var blob = new Blob(save);
+
+                    var video = new Video(container.element, name);
+                    if (save)
+                    {
+                        video.loadFromSave(save);
+                    }
+                    else
+                    {
+                        video.load(name);
+                    }
+                    me.scenes.push(video);
+                    container.addInput("Empezará a este tiempo (en segundos al fin).", "number", function (value) { video.startPosition = MathHelper.forceParseFloat(value); video.element.currentTime = video.startPosition; video.drawPreview(); }, true, video.startPosition);
+                    container.addInput("Terminará a este tiempo (en segundos).", "number", function (value) { video.endPosition = MathHelper.forceParseFloat(value); video.element.currentTime = video.element.duration - video.endPosition; }, true, video.endPosition);
+                    container.addInput("Aquí, puede poner un programa en JavaScript que cambiar cada parte de su video.", "textarea", function (value) { var error = video.loadFilterScript("("+value+")"); video.drawPreview(); if (error !== true) { console.warn(error); } }, true, video.filterScriptText);
+                    container.addInput("La menor locación a la izquierda.", "number", function (value) { video.cropX = parseFloat(value); video.drawPreview(); }, true, video.cropX);
+                    container.addInput("La menor locación al alta.", "number", function (value) { video.cropY = parseFloat(value); video.drawPreview(); }, true, video.cropY);
+                    container.addInput("La mejor locación a la izquierda.", "number", function (value) { video.cropWidth = parseFloat(value); video.drawPreview(); }, true, video.cropWidth);
+                    container.addInput("La mejor locación al alta.", "number", function (value) { video.cropHeight = parseFloat(value); video.drawPreview(); }, true, video.cropHeight);
+                    container.addInput("No quiero oír este video.", "checkbox", function (value, checkBox) { video.setAudioEnabled(!checkBox.checked); video.drawPreview(); }, true, !video.audioEnabled);
+
+                    container.addObject(video);
+                    video.drawPreview(); //setAudioEnabled
+                }
+                if(typeof save === "string")
+                {
+                    load(save.split(" ")[1], save);
+                }
+                else
+                {
+                    loadFile("un archivo de video", function (data, name)
+                    {
+                        load(name.name, undefined, name, data);
+                    });
+                }
+            };
+            this.addStopMotion = function (save)
+            {
+                function load(data, save)
+                {
+
+                    var container = new AddedScene(me.scenes.length, me, me.addedScenesHelper);
+                    var stopMotion = (new StopMotion(data, container.element));
+                    if (save)
+                    {
+                        stopMotion.loadFromSave(save);
+                    }
+                    else if(data)
+                    {
+                        stopMotion.load(data);
+                    }
+
+                    container.addInput("Partes por segundo.", "number", function (value) { stopMotion.fps = value; }, true, stopMotion.fps);
+                    container.addButton("Edite", true, stopMotion.edit);
+                    container.addObject(stopMotion);
+                    me.scenes.push(stopMotion);
+                    stopMotion.drawPreview();
+                }
+                if (typeof save !== "string")
+                {
+                    /*loadFile("&ldquo;Los Partes de Su Video&rdquo;", function (data, name)
+                    {
+                        load(data);
+                    });*/
+                    load();
+                }
+                else
+                {
+                    load("", save);
+                }
+            };
+            this.addImage = function (save)
+            {
+                function load(name, save)
+                {
+                    var container = new AddedScene(me.scenes.length, me, me.addedScenesHelper);
+                    var image = new VideoImage(container.element, name);
+                    if (save)
+                    {
+                        image.loadFromSave(save);
+                    }
+                    else
+                    {
+                        image.load(name);
+                    }
+                    me.scenes.push(image);
+                    container.addInput("Número de partes.", "number", function (value) { image.numberOfFrames = parseInt(value); image.drawPreview(); }, true, image.numberOfFrames);
+                    container.addInput("La duración de cada parte.", "number", function (value) { image.frameLength = parseInt(value); image.drawPreview(); }, true, image.frameLength);
+                    container.addInput("Estire X. Puede poner cero a uno. Por ejemplo, puede poner 0.5.", "text", function (value) { image.xScale = parseFloat(value); image.drawPreview(); }, true, image.xScale);
+                    container.addInput("Estire Y.", "number", function (value) { image.yScale = parseFloat(value); image.drawPreview();  }, true, image.yScale);
+                    container.addInput("x", "number", function (value) { image.x = parseInt(value); image.drawPreview(); }, true, image.x);
+                    container.addInput("y", "number", function (value) { image.y = parseInt(value); image.drawPreview(); }, true, image.y);
+                    container.addInput("La velocidad de estire X.", "number", function (value) { image.xScaleVelocity = parseFloat(value); image.drawPreview(); }, true, image.xScaleVelocity);
+                    container.addInput("La velocidad de estire Y.", "number", function (value) { image.yScaleVelocity = parseFloat(value); image.drawPreview();  }, true, image.yScaleVelocity);
+                    container.addInput("La velocidad de X.", "number", function (value) { image.xVelocity = parseFloat(value); image.drawPreview(); }, true, image.xVelocity);
+                    container.addInput("La velocidad de Y.", "number", function (value) { image.yVelocity = parseFloat(value); image.drawPreview(); }, true, image.yVelocity);
+                    container.addInput("Locación", "text", function (value) { image.src = value; image.element.src=value; image.drawPreview(); }, true, image.src);
+                    container.addObject(image);
+                    image.drawPreview();
+                }
+                if (typeof save === "string")
+                {
+                    load(save.split(" ")[1], save);
+                }
+                else
+                {
+                    loadFile("el archivo de su retrato", function (data, name)
+                    {
+                        load(name.name);
+                    });
+                }
+            };
+            this.addSplit = function (save)
+            {
+                var container = new AddedScene(me.scenes.length, me, me.addedScenesHelper);
+                var splitObject = new SplitObject(undefined, undefined, container.element);
+                if(typeof save === "string")
+                {
+                    splitObject.loadFromSave(save);
+                }
+                
+                container.addObject(splitObject);
+                me.scenes.push(splitObject);
+            };
+
+            this.addCaja = function(save)
+            {
+                var container = new AddedScene(me.scenes.length, me, me.addedScenesHelper);
+                var caja = new Cube3D(container.element);
+
+                if(typeof save === "string")
+                {
+                    caja.loadFromSave(save);
+                }
+
+                var labelNames = 
+                {
+                    "duration": "Duración en Total",
+                    "frameLength": "Duración de Cada Parte",
+                    "x": "X",
+                    "y": "Y",
+                    "z": "Z",
+                    "w": "Tamaño en x",
+                    "h": "Tamaño en y",
+                    "d": "Tamaño en z",
+                    "rx": "Rotación de x",
+                    "ry": "Rotación de y",
+                    "rz": "Rotación de z",
+                    "drx": "La velocidad de rotación de x",
+                    "dry": "La velocidad de rotación de y",
+                    "drz": "La velocidad de rotación de z",
+                    "dx": "La velocidad del cambio de x",
+                    "dy": "La velocidad del cambio de y",
+                    "dz": "La velocidad del cambio de z",
+                    "dw": "La velocidad del cambio del tamaño en x",
+                    "dh": "La velocidad del cambio del tamaño en y",
+                    "dd": "La velocidad del cambio del tamaño en z",
+                    "countX": "El numero de las cajas en x",
+                    "countZ": "El numero de las cajas en z",
+                    "yEquation": "La ecuación para decidir y.",
+                    "centerX": "La locación del centro de x.",
+                    "centerY": "La locación del centro de y.",
+                    "centerZ": "La locación del centro de z."
+                };
+
+                var handleInput = function(i, typeOfInput)
+                {
+                    var label = i;
+
+                    if(i in labelNames)
+                    {
+                        label = labelNames[i];
+                    }
+
+                    container.addInput(label, typeOfInput || "number", 
+                        function(value) 
+                        {
+                            if(typeOfInput)
+                            {
+                                caja.changable[i] = value;
+                            }
+                            else
+                            {
+                                caja.changable[i] = MathHelper.forceParseFloat(value);
+                            }
+                            
+                            caja.drawPreview();
+                        }, true, caja.changable[i]);
+                };
+
+                for(var i in labelNames)
+                {
+                    if(typeof caja.changable[i] === "number")
+                    {
+                        handleInput(i);
+                    }
+                    else
+                    {
+                        handleInput(i, "text");
+                    }
+                }
+
+                container.addInput("El color de la pantalla", "color",
+                function(value) 
+                { 
+                
+                    caja.changable.backgroundColor = HTMLHelper.changeColorStringRGBMax(value, 256.0, 1.0); 
+                    caja.drawPreview(); 
+                    
+                }, true, HTMLHelper.changeColorStringRGBMax(caja.changable.backgroundColor, 1.0, 256.0));
+                
+                container.addInput("Borre cada parte", "checkbox", 
+                        function(value, input) { caja.changable.clearEachTime = input.checked; caja.drawPreview(); },
+                         true, caja.changable.clearEachTime);
+
+                //handleInput("backgroundColor", "text");
+
+                container.addObject(caja);
+                me.scenes.push(caja);
+                caja.drawPreview();
+
+            };
+
+            this.addText = function (save)
+            {
+                var container = new AddedScene(me.scenes.length, me, me.addedScenesHelper);
+                var text = (new Text(undefined, undefined, container.element));
+                if (typeof save === "string")
+                {
+                    text.loadFromSave(save);
+                }
+
+                container.addInput("Texto: ", "textarea", function (value) { text.text = value; text.drawPreview(); }, true, text.text);
+                container.addInput("Tipo de texto: ", "text", function (value) { text.font = value; text.drawPreview(); }, true, text.font);
+                container.addInput("Color", "color", function (value) { text.color = value; text.drawPreview(); }, true, text.color);
+                container.addInput("Color de la Pantalla", "color", function (value) { text.bgColor = value; text.drawPreview(); }, true, text.bgColor);
+                container.addInput("X (%)", "number", function (value) { text.originalX = parseInt(value); text.drawPreview(); }, true, text.originalX);
+                container.addInput("Y (%)", "number", function (value) { text.originalY = parseInt(value); text.drawPreview(); }, true, text.originalY);
+                container.addInput("Duración en Total", "number", function (value) { text.length = parseInt(value); text.drawPreview(); }, true, text.length);
+                container.addInput("Duración de Cada Parte", "number", function (value) { text.frameLength = parseInt(value); text.drawPreview(); }, true, text.frameLength);
+                container.addInput("Cada parte, cambie X por este. Es Δx.", "number", function (value) { text.xVelocity = parseFloat(value); text.drawPreview(); }, true, text.xVelocity);
+                container.addInput("Cada parte, cambie Y por este. Es Δy.", "number", function (value) { text.yVelocity = parseFloat(value); text.drawPreview(); }, true, text.yVelocity);
+                container.addInput("Separe las frases, si sea largos.", "checkbox", function (value, checkBox) { text.wordWrap = checkBox.checked; text.drawPreview(); }, true, text.wordWrap);
+
+                container.addSelect("El lado de su punto, (X, Y), con su texto.", 
+                {
+                 "izquierda": "la izquierda",
+                 "derecho": "el derecho",
+                 "centro": "el centro"
+                },
+                function (value) { text.textAlign = value; text.drawPreview(); }, true, text.textAlign);
+
+                container.addSelect("La parte de cada línea con su texto.", 
+                {
+                 "arriba": "arriba",
+                 "abajo": "abajo",
+                 "middle": "el centro",
+                 "alphabetic": "alfabético"
+                }, function (value) { text.textBaseline = value; text.drawPreview(); }, true, text.textBaseline);
+                container.addInput("La X locación que empieza una línea nueva.", "number", function (value) { text.originalWrapX = parseFloat(value); text.drawPreview(); }, true, text.wrapX);
+                container.addInput("Cambia la X locación que empieza una línea nueva por este número.", "number", function (value) { text.wrapXVelocity = parseFloat(value); text.drawPreview(); }, true, text.wrapXVelocity);
+                container.addObject(text);
+                me.scenes.push(text);
+                text.drawPreview();
+            };
+            this.addSound = function (save)
+            {
+                function load(name, save)
+                {
+
+                    var container = new AddedScene(me.scenes.length, me, me.addedScenesHelper);
+                    var sound = (new Sound(name, container.element));
+                    if (save)
+                    {
+                        sound.loadFromSave(save);
+                    }
+                    else
+                    {
+                        sound.load(name);
+                    }
+                    container.addInput("Locación", "text", function(value){sound.src=value; sound.element.src=value;}, true, sound.src);
+                    container.addInput("Empiece a este tiempo", "text", function(value){sound.wait=MathHelper.forceParseFloat(value); sound.element.currentTime = sound.wait;}, true, (sound.wait || 0) + "");
+                    container.addInput("Termine a este tiempo", "text", function(value){sound.end = MathHelper.forceParseFloat(value); sound.element.currentTime = sound.element.duration - sound.end;}, true, sound.end + "");
+                    container.addSlider("Velocidad", function(value){ sound.element.playbackRate = value; }, 0.5, 4, true, sound.element.playbackRate);
+                    container.addSlider("El Volumen", function(value){ sound.element.volume = value; }, 0.1, 2, true, sound.element.volume);
+                    container.addObject(sound);
+                    me.scenes.push(sound);
+                    sound.drawPreview();
+                }
+                if (typeof save !== "string")
+                {
+                    loadFile("un archivo de sonido. Necisita estar en la misma pantalla que este programa", function (data, name)
+                    {
+                        load(name.name);
+                    });
+                }
+                else
+                {
+                    load("", save);
+                }
+            };
+            this.addSpeechSynthesis = function (save)
+            {
+                var container = new AddedScene(me.scenes.length, me, me.addedScenesHelper);
+                var text = (new TalkObject(undefined, container.element));
+                if (typeof save === "string")
+                {
+                    text.loadFromSave(save);
+                }
+
+                container.addInput("Texto: ", "text", function (value) { text.text = value; text.load(text.text, text.speed || 1, text.pitch, text.voice); }, true, text.text);
+                container.addInput("Velocidad", "text", function (value) { text.speed = parseFloat(value); text.load(text.text, text.speed, text.pitch, text.voice); }, true, text.speed || 1);
+                container.addInput("Tono", "text", function (value) { text.pitch = parseFloat(value); text.load(text.text, text.speed, text.pitch, text.voice); }, true, text.pitch || 1);
+                container.addSelect("Voz", JavaScriptHelp.getSpeechSynthesisVoices(), function (value) { text.voice = parseFloat(value); text.load(text.text, text.speed, text.pitch, text.voice); }, true, text.voice||2);
+                container.addObject(text);
+                me.scenes.push(text);
+                text.drawPreview();
+            };
+
+            this.save = function (doNotSaveToFile)
+            {
+                var save = "";
+                var saveArray = [];
+                for (var i = 0; i < me.scenes.length; i++)
+                {
+                    saveArray.push(me.scenes[i].save(true));
+                }
+                save = JSON.stringify({"data":saveArray, "title":me.titleZone.innerHTML});
+                if(doNotSaveToFile === false || doNotSaveToFile === undefined)
+                {
+                    save = JavaScriptHelp.compressSlashes(save);
+		        try
+		        {
+		            navigator.msSaveBlob(new Blob([save], { type: "text/plain" }), "video.json");
+		        }
+		        catch (e)
+		        {
+		            console.warn(e);
+		            try
+		            {
+				    var fileURL;
+				    try
+				    {
+				        fileURL = URL.createObjectURL(save);
+				    }
+				    catch(e)
+				    {
+				        fileURL = URL.createObjectURL(new Blob([save], { type: "text/plain" }));
+				    }
+				    var link = document.createElement("a");
+				    link.href = fileURL;
+				    link.click();
+				    link.download = "descargar.txt";
+				    link.innerHTML = " Haga un clic aquí para guardar.";
+				    link.style.paddingTop="20px";
+				    link.style.color="red";
+				    link.style.font="200% sans";
+				    link.style.backgroundColor="rgba(255,255,255,0.75)";
+				    link.style.position="fixed";
+				    link.style.left=0;
+				    link.style.top=0;
+				    link.style.width="100%";
+				    link.style.textAlign="center";
+				    link.style.transform="rotate(1deg)";
+				    link.style.height="100%";
+				    link.onclick=function()
+				    {
+				        link.outerHTML="";
+				    };
+				    document.body.appendChild(link);
+		            }
+		            catch(e)
+		            {
+		                var fileWindow=window.open("");
+		                fileWindow.document.write("<!DOCTYPE html><html><head><title>Guarde su Archivo</title></head><body></body></html>");
+		                fileWindow.document.body.textContent=save;
+                                fileWindow.document.body.select();
+                                fileWindow.alert("Copia el texto para guardar su archivo.");
+		            }
+		        }
+                }
+                else
+                {
+                	return save;
+                }
+            };
+            this.load=function(data)
+            {
+                    try
+                    {
+                        var json = JSON.parse(JavaScriptHelper.decompressSlashes(data));
+                    }
+                    catch(e)
+                    {
+                        console.warn(e);
+                        window.errorData = data;
+                        SubWindowHelper.prompt("Información", "¡Era un problema! Ponga su data aquí", "", function(givenData)
+                        {
+                            me.load(givenData);
+                        }, "textarea");
+                        
+                        return;
+                    }
+                    
+                    if(json.title)
+                    {
+                        me.titleZone.innerHTML=json.title;
+                    }
+                    
+                    if(json.data)
+                    {
+                        var data=json["data"];
+                        for(var i=0; i<data.length; i++)
+                        {
+                            var id = data[i].substring(0, data[i].search(" "));
+                            switch(id)
+                            {
+                                case "stopM":
+                                    me.addStopMotion(data[i]);
+                                    break;
+                                case "sound":
+                                    me.addSound(data[i]);
+                                    break;
+                                case "text":
+                                    me.addText(data[i]);
+                                    break;
+                                case "talk":
+                                    me.addSpeechSynthesis(data[i]);
+                                    break;
+                                case "image":
+                                    me.addImage(data[i]);
+                                    break;
+                                case "split":
+                                	me.addSplit(data[i]);
+                                    break;
+                                case "caja":
+                                    me.addCaja(data[i]);
+                                    break;
+                                default:
+                                    me.addVideo(data[i]);
+                            }
+                        }
+                    }
+            };
+            this.loadFromSave = function (save)
+            {
+            	if(typeof save != "string")
+            	{
+		        loadFile("un archivo de guardar", function (data)
+		        {
+		            me.load(data);
+		        });
+                }
+                else
+                {
+                	me.load(save);
+                }
+            };
+        }
+        function main()
+        {
+            var movieMaker = new MovieMaker();
+            movieMaker.loadControls();
+            window.movieMaker = movieMaker;
+            
+            document.body.onbeforeunload=function()
+            {
+            	return "¿Es seguro que quiera salir? Es posible que no haya guardado su video.";
+            };
+        }
+        main();
+    </script>
+</body>
+</html>
