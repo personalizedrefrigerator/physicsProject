@@ -414,7 +414,7 @@ WebGLHelper.setClearColorString = function(colorString)
 
     if(colorString != WebGLHelper.lastColorString)
     {
-        var parts = HTMLHelper.colorStringToArray(colorString);
+        var parts = JSHelper.colorStringToArray(colorString);
 
         if(parts.length >= 4)
         {
@@ -425,7 +425,7 @@ WebGLHelper.setClearColorString = function(colorString)
             gl.clearColor(0.0, 0.0, 0.0, 1.0);
         }
 
-        console.log("Updated!");
+        console.log("Updated! Color: " + JSON.stringify(parts));
         WebGLHelper.lastColorString = colorString;
     }
 };
