@@ -1,5 +1,5 @@
 ﻿// A stop-motion creation program.
-//(c) 2018 Henry Heino
+//Created in 2018 for Pantalla Cambie.
 
 function StopMotionEditor(parentElement, frames)
 {

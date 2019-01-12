@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Cache-Control" content="cache"/> <!-- Tell the browser to cache the page
+                                                            This means it won't ask the server
+                                                            to provide the page each time the
+                                                            user requests it: It caches a version
+                                                            of the page -->
+    <meta http-equiv="Pragma" content="cache"/> <!-- Just in case the previous meta doesn't work. -->
+    <meta http-equiv="encoding" content="UTF-8"/> <!-- Firefox requests that the encoding
+                                                        be specified here. -->
+    <meta name="viewport" content = "width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0"/> <!-- Tell mobile devices that the page should be not be extremely zoomed
+                          in or out on page load.  -->
+    <title>Physics</title>
+    
+    <!-- Includes -->
+    <!-- 3D Math Libraries -->
+    <script src = "Matrix.js"></script>
+    <script src = "Objects.js"></script>
+    <script src = "Vector.js"></script>
+    
+    <!-- General Math Libraries -->
+    <script src = "MathHelper.js"></script>
+    
+    <!-- Display Libraries -->
+    <script src = "JSHelper.js"></script>
+    <script src = "HTMLHelper.js"></script>
+    <script src = "TabbedDisplay.js"></script>
+    <script src = "SubWindowHelper.js"></script>
+    <script src = "StopMotionEditor.js"></script>
+    <script src="WebGLHelper.js"></script>
+    
+    <style>
+    canvas
+    {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    </style>
+    
+</head>
+<body>
+
+<script>
+// Main program here
+
+class Application
+{
+    // JavaScript does not support public/private at this time.
+    
+    constructor()
+    {
+        this.ctx = WebGLHelper.getContext();
+        
+        document.body.appendChild(this.ctx.canvas); // DrawingContext.canvas is an HTML Element.
+        
+        this.testGL(); // In JavaScript, "this" is not implied.
+    }
+    
+    testGL()
+    {
+        // Tell the canvas to fill the screen.
+        WebGLHelper.resizeTo(window.innerWidth, window.innerHeight);
+        
+        WebGLHelper.clear();
+        WebGLHelper.worldMatrix.save();
+        
+        WebGLHelper.worldMatrix.rotateX(0.5, true); // True means use the method where matricies
+                                                    //are multiplied first, then the new matrix
+                                                    //modifies a point, instead of the other way
+                                                    //around. The other method is kept for compatibility. 0.5 is in radians.
+        
+        WebGLHelper.updateMatricies(false, true, true); // Update the world and camera matricies.
+        WebGLHelper.renderObject();
+        
+        WebGLHelper.worldMatrix.restore();
+    }
+    
+    // I included this for fun!
+    //I am learning ECMA script 6,
+    //so much of this syntax is new to me.
+    //To get the canvas, call
+    //application.getCanvas, without parenthesies!
+    //This is different.
+    get getCanvas()
+    {
+        return this.ctx.canvas;
+    }
+}
+
+var app = new Application();
+app.getCanvas();
+</script>
+</body>
+</html>
