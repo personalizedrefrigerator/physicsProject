@@ -217,6 +217,11 @@ WebGLHelper.getContext = function()
                 false, // No normalization.
                 0, 0); // Stride and offset.
 
+        //var verticiesToBuffer = verticies.splice(0, 0); // Add two points to the end for line rendering.
+
+        verticies.push(-1, -1, -1,
+            1, 1, 1, 1, -1, 1);        
+
         gl.bufferData(WebGLHelper.gl.ARRAY_BUFFER, new Float32Array(verticies),
                 gl.STATIC_DRAW);
 
@@ -405,7 +410,15 @@ WebGLHelper.renderObject = function()
     var gl = WebGLHelper.getContext();
     gl.drawArrays(gl.TRIANGLES, 
         0, // Offset
-        WebGLHelper.verticies.length / 3); // Verticies length.
+        WebGLHelper.verticies.length / 3 - 2); // Verticies length.
+};
+
+WebGLHelper.renderLine = function()
+{
+    var gl = WebGLHelper.getContext();
+    gl.drawArrays(gl.LINES, 
+        WebGLHelper.verticies.length / 3 - 3, // Offset
+        2); // Verticies length.
 };
 
 WebGLHelper.setClearColorString = function(colorString)

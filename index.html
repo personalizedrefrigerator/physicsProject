@@ -13,6 +13,8 @@
                                                         be specified here. -->
     <meta name="viewport" content = "width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0"/> <!-- Tell mobile devices that the page should be not be extremely zoomed
                           in or out on page load.  -->
+    <link rel="icon" href="logo.png"/>
+    <link rel="stylesheet" href="style.css"/>
     <title>Physics</title>
     
     <!-- Includes -->
@@ -35,10 +37,48 @@
     <style>
     canvas
     {
-        position: absolute;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    body
+    {
+        background-image: radial-gradient(darkred, red);
+        background-size: 5px 5px;
+        
+        overflow: hidden;
+    }
+
+    .controls
+    {
+        position:fixed;
         top: 0;
         left: 0;
+        border: 1px solid red;
     }
+    
+    input, button
+    {
+        border: 2px inset rgba(100, 255, 130, 0.8);
+        border-radius: 10px;
+        transition: 0.4s ease all;
+        
+        background-image: linear-gradient(10deg, rgba(155, 155, 155, 0.6), rgba(200, 255, 200, 0.3), rgba(255, 255, 255, 0.7));
+        background-color: rgba(200, 200, 200, 0.7);
+        
+        padding: 5px;
+        transform: matrix(1, 0, 0, 1, 0, 0);
+        
+        box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    input:active, button:active, input:focus, button:focus, button:hover
+    {
+        background-color: rgba(100, 100, 255, 0.5);
+        transform: matrix(0.9, 0.01, 0.01, 1, 0, 0);
+        box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.5);
+    }
+    
     </style>
     
 </head>
@@ -46,6 +86,47 @@
 
 <script>
 // Main program here
+
+class Particle
+{
+    constructor()
+    {
+        this.position = new Vector3(0, 0, 0);
+        this.velocity = new Vector3(0, 1, 0);
+        this.q = 1.0;
+        this.mass = 1.0;
+    }
+    
+    render()
+    {
+        WebGLHelper.worldMatrix.save();
+        WebGLHelper.worldMatrix.scale(0.5, 0.5, 0.5, true); // The true is very important for proper scaling.
+        WebGLHelper.worldMatrix.translate(this.position.x - 0.25, this.position.y - 0.25, this.position.z - 0.25, true);
+        WebGLHelper.worldMatrix.rotateZ(0.4, true);
+
+        
+        WebGLHelper.updateMatricies(false, true, true); // Update the world and camera matricies.
+        WebGLHelper.renderObject();
+        
+        WebGLHelper.worldMatrix.restore();
+    }
+
+    animate(field, deltaT)
+    {
+        let force = this.velocity.cross(field).multipliedByScalar(this.q);
+        
+        if(this.mass === 0)
+        {
+            this.mass = 0.000001;
+        }
+        
+        let a = force.multipliedByScalar(1 / this.mass);
+        
+        this.velocity = this.velocity.add(a.multipliedByScalar(deltaT / 1000));
+
+        this.position = this.position.add(this.velocity.multipliedByScalar(deltaT / 1000));
+    }
+}
 
 class Application
 {
@@ -59,7 +140,182 @@ class Application
         
         this.setGLOptions();
         
+        this.objects = [];
+        this.objects.push(new Particle());
+
+        this.field = new Vector3(1, 0, 0);
+
         this.animate(); // In JavaScript, "this" is not implied.
+
+
+        this.lastTime = (new Date()).getTime();
+
+        this.loadControls();
+    }
+
+    loadControls()
+    {
+           this.controlsArea = document.createElement("div");
+           this.fieldIn = document.createElement("input");
+           this.velocityIn = document.createElement("input");
+           this.addButton = document.createElement("button");
+           this.resetButton = document.createElement("button");
+           this.addButton = document.createElement("button");
+           this.helpButton = document.createElement("button");
+
+           this.controlsArea.setAttribute("class", "controls");
+
+           var me = this;
+           this.fieldIn.oninput = function()
+           {
+                var spl = me.fieldIn.value.split(", ");
+                
+                if(spl.length === 3)
+                {
+                        me.field.x = MathHelper.forceParseFloat(spl[0]);
+                        me.field.y = MathHelper.forceParseFloat(spl[1]);
+                        me.field.z = MathHelper.forceParseFloat(spl[2]);
+                        
+                        me.fieldIn.setAttribute("class", "validInput");
+                }
+                else
+                {
+                    me.fieldIn.setAttribute("class", "invalidInput");
+                }
+           };
+
+           this.velocityIn.oninput = function()
+           {
+                var spl = me.velocityIn.value.split(", ");
+                
+                if(spl.length === 3)
+                {
+                    for(var i in me.objects)
+                    {
+                        me.objects[i].velocity.x = MathHelper.forceParseFloat(spl[0]);
+                        me.objects[i].velocity.y = MathHelper.forceParseFloat(spl[1]);
+                        me.objects[i].velocity.z = MathHelper.forceParseFloat(spl[2]);
+                        
+                        me.velocityIn.setAttribute("class", "validInput");
+                    }
+                }
+                else
+                {
+                    me.velocityIn.setAttribute("class", "invalidInput");
+                }
+           };
+
+           this.resetButton.onclick = function()
+           {
+                me.objects = [];
+           };
+
+           this.addButton.onclick = function()
+           {
+                let newParticle = new Particle();
+
+                SubWindowHelper.prompt("Velocity", "Input Particle Velocity (units / second)", "x, y, z", function(velocityString)
+                {
+                    var splitVelocity = velocityString.split(", ");
+
+                    if(splitVelocity.length === 3)
+                    {
+                        SubWindowHelper.prompt("Charge", "Input particle charge:", "1",
+                        function(chargeString)
+                        {
+                            SubWindowHelper.prompt("Mass", "Input particle mass:", "1",
+                            function(massString)
+                            {
+                                newParticle.velocity.x = MathHelper.forceParseFloat(splitVelocity[0]);
+                                newParticle.velocity.y = MathHelper.forceParseFloat(splitVelocity[1]);
+                                newParticle.velocity.z = MathHelper.forceParseFloat(splitVelocity[2]);
+                                
+                                newParticle.q = MathHelper.forceParseFloat(chargeString);
+                                newParticle.mass = MathHelper.forceParseFloat(massString);
+
+                                me.objects.push(newParticle);
+                            }, "text", undefined, {value: "1"});
+                        }, "text", undefined, {value: "1"} );
+                    }
+                }, "text", undefined, {value: "0, 0, 0"});
+           };
+
+           this.helpButton.onclick = function()
+           {
+               var helpWindow = SubWindowHelper.create({title: "Help", height: "auto"});
+
+               // Moved to SubWindowHelper
+               helpWindow.getContent().innerHTML = `
+<h1>Help Page</h1>
+<i>Particles, in this simulation, have a tendency to escape.</i>
+<ul>
+<li><b>First Input</b> Field X, Y, and Z components.</li>
+<li><b>Second Input</b> All particles' X, Y, and Z velocity components.</li>
+<li><b>Key W</b> Move camera/object forwards.</li>
+<li><b>Key S</b> Move camera/object backwards.</li>
+<li><b>Key A</b> Rotate camera/object left.</li>
+<li><b>Key D</b> Rotate camera/object right.</li>
+<li><b>Key Z</b> Rotate camera/object around the x-axis.</li>
+<li><b>Key X</b> Rotate camera/object around the x-axis in the other direction.</li>
+<li><b>Key Q</b> Reset view.</li>
+<li><b>Key E</b> Toggle between manipulating the camera and the object.</li>
+</ul>
+`;
+
+           };
+
+           this.fieldIn.value = this.field.x + ", " + this.field.y + ", " + this.field.z;
+           this.velocityIn.value = this.objects[0].velocity.toArray().join(", ");
+           this.addButton.innerHTML = "Add";
+           this.resetButton.innerHTML = "Reset";
+           this.helpButton.innerHTML = "Help";
+
+           document.body.appendChild(this.controlsArea);
+           this.controlsArea.appendChild(this.fieldIn);
+           this.controlsArea.appendChild(this.velocityIn);
+           this.controlsArea.appendChild(this.addButton);
+           this.controlsArea.appendChild(this.resetButton);
+           this.controlsArea.appendChild(this.helpButton);
+
+           WebGLHelper.cameraMatrix.save();
+
+           var invertMode = true; // Whether to use first person or other control method.
+
+           document.body.addEventListener("keypress", function(e)
+           {
+               var deltaRotate = -0.1,
+                   deltaPosition = 0.5;
+               switch(e.key)
+               {
+                   case "a":
+                      WebGLHelper.cameraMatrix.rotateY(deltaRotate, invertMode);
+                      break;
+                   case "d":
+                      WebGLHelper.cameraMatrix.rotateY(-deltaRotate, invertMode);
+                      break;
+                   case "w":
+                      WebGLHelper.cameraMatrix.translate(0, 0, -deltaPosition, invertMode);
+                      break;
+                   case "s":
+                      WebGLHelper.cameraMatrix.translate(0, 0, deltaPosition, invertMode);
+                      break;
+                   case "z":
+                      WebGLHelper.cameraMatrix.rotateX(deltaRotate, invertMode);
+                      break;
+                   case "x":
+                      WebGLHelper.cameraMatrix.rotateX(-deltaRotate, invertMode);
+                      break;
+                   case "e":
+                      invertMode = !invertMode;
+                      break;
+                   case "q":
+                      WebGLHelper.cameraMatrix.restore();
+                      WebGLHelper.cameraMatrix.save();
+                      break;
+               }
+
+               WebGLHelper.updateMatricies(false, false, true); // Update the camera matrix.
+           }, true);
     }
     
     // Set options for the 3d graphics renderer.
@@ -67,14 +323,14 @@ class Application
     {
         let logoImage = new Image();
         logoImage.crossOrigin = "anonymous";
-        logoImage.src = "logo.png";
+        logoImage.src = "particle.png";
         
         logoImage.onload = function() // Once the image has loaded,
         {
             WebGLHelper.imageToTexture(logoImage);
         };
         
-        WebGLHelper.setClearColorString("green");
+        WebGLHelper.setClearColorString("rgba(0.2, 0.1, 0.1, 0.4)");
     }
     
     // A fast method to display a cube, to test WebGL.
@@ -101,10 +357,56 @@ class Application
         WebGLHelper.worldMatrix.restore();
     }
     
+    showField()
+    {   
+        let fieldSize = 4;
+
+        for(var x = -fieldSize; x < fieldSize; x++)
+        {
+            for(var y = -fieldSize; y < fieldSize; y++)
+            {
+                for(var z = -fieldSize; z < fieldSize; z++)
+                {
+                    WebGLHelper.worldMatrix.save();
+                    WebGLHelper.worldMatrix.translate(x * 4, y * 4, z * 4, true);
+
+                    WebGLHelper.worldMatrix.scale(this.field.x / 5, this.field.y / 5, this.field.z / 5, true); // The true is very important for proper scaling.
+        
+                    WebGLHelper.updateMatricies(false, true, false); // Update the world matrix.
+                    WebGLHelper.renderLine();
+        
+                    WebGLHelper.worldMatrix.restore();
+                }
+            }
+        }
+
+    }
+
+    loopOnce()
+    {
+         // Tell the canvas to fill the screen.
+         WebGLHelper.resizeTo(window.innerWidth, window.innerHeight);
+         WebGLHelper.clear();
+
+
+         let time = (new Date()).getTime();
+
+         let deltaT = time - this.lastTime;
+
+         for(var i in this.objects)
+         {
+              this.objects[i].animate(this.field, deltaT);
+              this.objects[i].render();
+         }
+
+         this.showField();
+         this.lastTime = time;
+    }
+
     // A basic animation loop.
     animate()
     {
-        this.testGL();
+        this.loopOnce();
     
         // If not stopping,
         if(!this.stopAnimationLoop)
