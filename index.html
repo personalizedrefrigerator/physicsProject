@@ -43,7 +43,8 @@
 
     body
     {
-        background-image: radial-gradient(darkred, red);
+        background-image: radial-gradient(rgba(100, 100, 100, 0.5), rgba(200, 200, 200, 0.7));
+        background-color: rgba(255, 0, 0, 1);
         background-size: 5px 5px;
         
         overflow: hidden;
@@ -79,6 +80,33 @@
         box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.5);
     }
     
+    .helpContentBox
+    {
+        margin-left: auto;
+        margin-right: auto; 
+        
+        max-width: 500px; 
+        
+        border: 1px solid gray; 
+        
+        background-image: radial-gradient(white, rgba(255, 255, 255, 0.8)); 
+        background-size: 3px 3px; 
+        
+        background-color: rgba(200, 200, 155, 1);
+        
+        box-shadow: 2px 1px 3px rgba(0, 0, 0, 0.5);
+        
+        transform: matrix(1, 0, 0, 1, 0, 0);
+        
+        transition: 0.3s ease all;
+    }
+    
+    .helpContentBox:hover
+    {
+        transform: matrix(0.99, 0.01, 0, 1, 0, 0);
+        
+        background-color: rgba(250, 250, 155, 1);
+    }
     </style>
     
 </head>
@@ -93,16 +121,35 @@ class Particle
     {
         this.position = new Vector3(0, 0, 0);
         this.velocity = new Vector3(0, 1, 0);
+        this.size = new Vector3(0.5, 0.5, 0.5);
         this.q = 1.0;
         this.mass = 1.0;
+        this.canCollide = false;
+    }
+    
+    collidesWith(other)
+    {
+        var mP = this.position;
+        var oP = other.position;
+        var mS = this.size;
+        var oS = other.size;
+        
+        var deltaPosition = mP.subtract(oP);
+        var distance = deltaPosition.getMagnitude();
+        
+        var r1 = mS.getMagnitude();
+        var r2 = oS.getMagnitude();
+        
+        // For now, use sphere collisions.
+        return distance <= r1 + r2;
     }
     
     render()
     {
         WebGLHelper.worldMatrix.save();
-        WebGLHelper.worldMatrix.scale(0.5, 0.5, 0.5, true); // The true is very important for proper scaling.
-        WebGLHelper.worldMatrix.translate(this.position.x - 0.25, this.position.y - 0.25, this.position.z - 0.25, true);
-        WebGLHelper.worldMatrix.rotateZ(0.4, true);
+        WebGLHelper.worldMatrix.scale(this.size.x, this.size.y, this.size.z, true); // The true is very important for proper scaling.
+        WebGLHelper.worldMatrix.translate(this.position.x + this.size.x/2, this.position.y + this.size.y/2, this.position.z - this.size.z/2, true);
+        //WebGLHelper.worldMatrix.rotateZ(0.4, true);
 
         
         WebGLHelper.updateMatricies(false, true, true); // Update the world and camera matricies.
@@ -111,8 +158,12 @@ class Particle
         WebGLHelper.worldMatrix.restore();
     }
 
-    animate(field, deltaT)
+    animate(field, deltaT, otherObjects)
     {
+        this.position = this.position.add(this.velocity.multipliedByScalar(deltaT / 1000));
+        
+        
+        
         let force = this.velocity.cross(field).multipliedByScalar(this.q);
         
         if(this.mass === 0)
@@ -123,8 +174,39 @@ class Particle
         let a = force.multipliedByScalar(1 / this.mass);
         
         this.velocity = this.velocity.add(a.multipliedByScalar(deltaT / 1000));
+        this.lastVelocity = this.velocity.copy();
+        this.selectedPositive = undefined;
 
-        this.position = this.position.add(this.velocity.multipliedByScalar(deltaT / 1000));
+        let encounteredThis = false;
+        
+        // Stop if collisions are deactivated.
+        if(!this.canCollide)
+        {
+            return;
+        }
+        
+        for(var i in otherObjects)
+        {
+            let other = otherObjects[i];
+            
+            if(other !== this && other.lastVelocity !== undefined && this.collidesWith(other))
+            {
+                this.selectedPositive = other.selectedPositive !== undefined ? false : true;
+            
+                let xVel = MathHelper.solveQuadratic(other.mass + this.mass * this.mass, -2 * this.mass * (this.mass * this.lastVelocity.x + other.mass * other.lastVelocity.x), Math.pow(this.mass * this.lastVelocity.x + other.mass * other.lastVelocity.x, 2) - this.mass*other.mass*this.lastVelocity.x * this.lastVelocity.x - other.mass * other.mass * other.lastVelocity.x * other.lastVelocity.x, this.selectedPositive ? 1 : -1);
+                let yVel = MathHelper.solveQuadratic(other.mass + this.mass * this.mass, -2 * this.mass * (this.mass * this.lastVelocity.y + other.mass * other.lastVelocity.y), Math.pow(this.mass * this.lastVelocity.y + other.mass * other.lastVelocity.y, 2) - this.mass*other.mass*this.lastVelocity.y * this.lastVelocity.y - other.mass * other.mass * other.lastVelocity.y * other.lastVelocity.y, this.selectedPositive ? 1 : -1);
+                let zVel = MathHelper.solveQuadratic(other.mass + this.mass * this.mass, -2 * this.mass * (this.mass * this.lastVelocity.z + other.mass * other.lastVelocity.z), Math.pow(this.mass * this.lastVelocity.z + other.mass * other.lastVelocity.z, 2) - this.mass*other.mass*this.lastVelocity.z * this.lastVelocity.z - other.mass * other.mass * other.lastVelocity.z * other.lastVelocity.z, this.selectedPositive ? 1 : -1);
+                
+                this.velocity.x = xVel;
+                this.velocity.y = yVel;
+                this.velocity.z = zVel;
+                
+            }
+            else if(other === this)
+            {
+                encounteredThis = true;
+            }
+        }
     }
 }
 
@@ -242,10 +324,11 @@ class Application
 
            this.helpButton.onclick = function()
            {
-               var helpWindow = SubWindowHelper.create({title: "Help", height: "auto"});
+               var helpWindow = SubWindowHelper.create({title: "Help", height: "auto", width: "75vw"});
 
                // Moved to SubWindowHelper
                helpWindow.getContent().innerHTML = `
+<div class = "helpContentBox">
 <h1>Help Page</h1>
 <i>Particles, in this simulation, have a tendency to escape.</i>
 <ul>
@@ -260,6 +343,7 @@ class Application
 <li><b>Key Q</b> Reset view.</li>
 <li><b>Key E</b> Toggle between manipulating the camera and the object.</li>
 </ul>
+</div>
 `;
 
            };
@@ -315,7 +399,60 @@ class Application
                }
 
                WebGLHelper.updateMatricies(false, false, true); // Update the camera matrix.
-           }, true);
+        }, true);
+        
+        var lastX, lastY;
+        this.ctx.canvas.addEventListener("touchstart", function(e)
+        {
+            e.preventDefault();
+            
+            var touch = e.changedTouches[0];
+            
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+        }, true);
+        
+        this.ctx.canvas.addEventListener("touchmove", function(e)
+        {
+            e.preventDefault();
+            
+            var touch = e.changedTouches[0];
+            
+            var x = touch.clientX,
+                y = touch.clientY;
+                
+            var dx = x - lastX,
+                dy = y - lastY;
+            
+            if(e.changedTouches.length === 1)
+            {
+                WebGLHelper.cameraMatrix.rotateY(dx / window.innerWidth, true);
+            }
+            else if(e.changedTouches.length === 2)
+            {
+                WebGLHelper.cameraMatrix.rotateX(dx / window.innerWidth, true);
+            }
+            else if(e.changedTouches.length === 3)
+            {
+                WebGLHelper.cameraMatrix.rotateZ(dx / window.innerWidth, true);
+            }
+            else
+            {
+                WebGLHelper.cameraMatrix.rotateY(dx / window.innerWidth, false);
+            }
+            
+            WebGLHelper.cameraMatrix.translate(0, 0, dy / window.innerHeight * 20, false);
+            
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+        }, true);
+        
+        this.ctx.canvas.addEventListener("touchend", function(e)
+        {
+            e.preventDefault();
+        }, true);
+        
+        this.ctx.canvas.style.touchAction = "none";
     }
     
     // Set options for the 3d graphics renderer.
@@ -393,9 +530,9 @@ class Application
 
          let deltaT = time - this.lastTime;
 
-         for(var i in this.objects)
+         for(var i = 0; i < this.objects.length; i++)
          {
-              this.objects[i].animate(this.field, deltaT);
+              this.objects[i].animate(this.field, deltaT, this.objects);
               this.objects[i].render();
          }
 
@@ -430,6 +567,9 @@ class Application
 }
 
 let app = new Application();
+
+// Choose a random background color.
+document.body.style.backgroundColor = JSHelper.getColorBasedOnTime(2, 10000, 20000, 30000, 1.0);
 </script>
 </body>
 </html>

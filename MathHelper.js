@@ -113,5 +113,9 @@ var MathHelper =
         }
         
         return result;
+    },
+    "solveQuadratic": function(a, b, c, solutionMultiplier)
+    {
+        return (-b + solutionMultiplier * Math.sqrt(b*b - 4*a*c)) / (2*a);
     }
 };

@@ -647,8 +647,18 @@ function Window(parent, windowList, windowCount, options)
     {
         requestAnimationFrame(function()
         {
-            me.element.style.left = Math.floor(window.innerWidth / 2 - me.element.clientWidth/2) + "px";
-            me.element.style.top = Math.floor(window.innerHeight / 2 - me.element.clientHeight/2) + "px";
+            me.element.style.left = Math.max(Math.floor(window.innerWidth / 2 - me.element.clientWidth/2), 0.0) + "px";
+            me.element.style.top = Math.max(Math.floor(window.innerHeight / 2 - me.element.clientHeight/2), 0.0) + "px";
+            
+            if(me.element.clientHeight > window.innerHeight)
+            {
+                me.element.style.height = window.innerHeight + "px";
+            }
+            
+            if(me.element.clientWidth > window.innerWidth)
+            {
+                me.element.style.width = window.innerWidth + "px";
+            }
         });
     }
     
